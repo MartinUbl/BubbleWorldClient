@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\Display">
+      <UniqueIdentifier>{3deda775-352e-45f5-ad83-eb64c7256f4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\General">
+      <UniqueIdentifier>{28dde106-e0fc-4839-a022-9f2ec5ee54c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Objects">
+      <UniqueIdentifier>{6a51f9ae-704d-4efc-bbc5-75031abfdc3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Network">
+      <UniqueIdentifier>{ca6d329e-0957-4bc4-a95c-7d5af7543145}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Gameplay">
+      <UniqueIdentifier>{26cca87d-08f1-45f7-a7b3-acd1ccf0781d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Stages">
+      <UniqueIdentifier>{51f535c4-6ffb-41a5-88f5-64c7c0e4146a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Storage">
+      <UniqueIdentifier>{bd62a5e9-f036-402e-845a-a14e4f193e64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Display\UI">
+      <UniqueIdentifier>{2c3c518e-ceba-457a-ac07-2b6e9ee96b40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep">
+      <UniqueIdentifier>{0a747910-275a-461b-9356-36d69a24fcc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep\SQLite">
+      <UniqueIdentifier>{4b15b5c0-b4b0-4c95-9506-f212d4059b6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Resources">
+      <UniqueIdentifier>{c2cc2303-39d6-4ee3-8417-8ad1ec480a76}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\General\Application.cpp">
+      <Filter>src\General</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\General\Main.cpp">
+      <Filter>src\General</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Storage\ImageStorage.cpp">
+      <Filter>src\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Stages\GameStage.cpp">
+      <Filter>src\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Stages\MenuStage.cpp">
+      <Filter>src\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Storage\MapStorage.cpp">
+      <Filter>src\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\Drawing.cpp">
+      <Filter>src\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Network\NetworkManager.cpp">
+      <Filter>src\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Network\PacketHandlers.cpp">
+      <Filter>src\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Network\SmartPacket.cpp">
+      <Filter>src\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\UI\ButtonWidget.cpp">
+      <Filter>src\Display\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\UI\LabelWidget.cpp">
+      <Filter>src\Display\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\UI\TextFieldWidget.cpp">
+      <Filter>src\Display\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\UI\UIWidget.cpp">
+      <Filter>src\Display\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\General\Log.cpp">
+      <Filter>src\General</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\UI\SplashMessageWidget.cpp">
+      <Filter>src\Display\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Gameplay\Gameplay.cpp">
+      <Filter>src\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Stages\LobbyStage.cpp">
+      <Filter>src\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dep\SQLite\sqlite3.c">
+      <Filter>dep\SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Storage\StorageManager.cpp">
+      <Filter>src\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dep\SQLite\database.cpp">
+      <Filter>dep\SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dep\SQLite\query.cpp">
+      <Filter>dep\SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Storage\FileStorage.cpp">
+      <Filter>src\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Resources\ResourceStreamManager.cpp">
+      <Filter>src\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\General\CRC32.cpp">
+      <Filter>src\General</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Resources\ResourceManager.cpp">
+      <Filter>src\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Stages\ConnectingStage.cpp">
+      <Filter>src\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Gameplay\Map.cpp">
+      <Filter>src\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\Creature.cpp">
+      <Filter>src\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\Player.cpp">
+      <Filter>src\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\Unit.cpp">
+      <Filter>src\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\WorldObject.cpp">
+      <Filter>src\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\General\Vector2.cpp">
+      <Filter>src\General</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\General\FramerateLimiter.cpp">
+      <Filter>src\General</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\General\Application.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\General.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Storage\ImageStorage.h">
+      <Filter>src\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Stages\Stages.h">
+      <Filter>src\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Storage\MapStorage.h">
+      <Filter>src\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\Drawing.h">
+      <Filter>src\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\Singleton.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Network\NetworkManager.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Network\Opcodes.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Network\PacketHandlers.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Network\SmartPacket.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\ButtonWidget.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\LabelWidget.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\TextFieldWidget.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\UIWidget.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\Colors.h">
+      <Filter>src\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\UIEnums.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\Log.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\Compatibility.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\SplashMessageWidget.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\GlobalActions.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Gameplay\Gameplay.h">
+      <Filter>src\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\SharedEnums.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dep\SQLite\sqlite3.h">
+      <Filter>dep\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dep\SQLite\sqlite3ext.h">
+      <Filter>dep\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Storage\StorageManager.h">
+      <Filter>src\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Storage\FileStorage.h">
+      <Filter>src\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dep\SQLite\database.h">
+      <Filter>dep\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dep\SQLite\libsqlitewrapped.h">
+      <Filter>dep\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dep\SQLite\query.h">
+      <Filter>dep\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Resources\ResourceStreamManager.h">
+      <Filter>src\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\CRC32.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Resources\ResourceManager.h">
+      <Filter>src\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Gameplay\Map.h">
+      <Filter>src\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Gameplay\MapEnums.h">
+      <Filter>src\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Objects\Creature.h">
+      <Filter>src\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Objects\Player.h">
+      <Filter>src\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Objects\Unit.h">
+      <Filter>src\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Objects\WorldObject.h">
+      <Filter>src\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Objects\AnimEnums.h">
+      <Filter>src\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Objects\ObjectEnums.h">
+      <Filter>src\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Objects\UpdateFields.h">
+      <Filter>src\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\Vector2.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\General\FramerateLimiter.h">
+      <Filter>src\General</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\dep\SQLite\sqlite3.def">
+      <Filter>dep\SQLite</Filter>
+    </None>
+  </ItemGroup>
+</Project>

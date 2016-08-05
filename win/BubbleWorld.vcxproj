@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{537FA4FD-414E-4FEC-83DE-7A2259937916}</ProjectGuid>
+    <RootNamespace>BubbleWorld</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../dep/SQLite;../src/Resources;../src/General;../src/Display;../src/Objects;../src/Network;../src/Gameplay;../src/Storage;../src/Stages;../../SDL/include/;../../SDL_image/include/;../../SDL_ttf/include/;../../SDL_gfx/include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_NO_DEBUG_HEAP=1;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../../SDL/lib/$(PlatformTarget)/;../../SDL_image/lib/$(PlatformTarget)/;../../SDL_ttf/lib/$(PlatformTarget)/;../../SDL_gfx/lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_gfx.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../dep/SQLite;../src/Resources;../src/General;../src/Display;../src/Objects;../src/Network;../src/Gameplay;../src/Storage;../src/Stages;../../SDL/include/;../../SDL_image/include/;../../SDL_ttf/include/;../../SDL_gfx/include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_NO_DEBUG_HEAP=1;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../../SDL/lib/$(PlatformTarget)/;../../SDL_image/lib/$(PlatformTarget)/;../../SDL_ttf/lib/$(PlatformTarget)/;../../SDL_gfx/lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_gfx.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../dep/SQLite;../src/Resources;../src/General;../src/Display;../src/Objects;../src/Network;../src/Gameplay;../src/Storage;../src/Stages;../../SDL/include/;../../SDL_image/include/;../../SDL_ttf/include/;../../SDL_gfx/include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_NO_DEBUG_HEAP=1;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../../SDL/lib/$(PlatformTarget)/;../../SDL_image/lib/$(PlatformTarget)/;../../SDL_ttf/lib/$(PlatformTarget)/;../../SDL_gfx/lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_gfx.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../dep/SQLite;../src/Resources;../src/General;../src/Display;../src/Objects;../src/Network;../src/Gameplay;../src/Storage;../src/Stages;../../SDL/include/;../../SDL_image/include/;../../SDL_ttf/include/;../../SDL_gfx/include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_NO_DEBUG_HEAP=1;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../../SDL/lib/$(PlatformTarget)/;../../SDL_image/lib/$(PlatformTarget)/;../../SDL_ttf/lib/$(PlatformTarget)/;../../SDL_gfx/lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_gfx.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\dep\SQLite\database.cpp" />
+    <ClCompile Include="..\dep\SQLite\query.cpp" />
+    <ClCompile Include="..\dep\SQLite\sqlite3.c" />
+    <ClCompile Include="..\src\Display\Drawing.cpp" />
+    <ClCompile Include="..\src\Display\UI\ButtonWidget.cpp" />
+    <ClCompile Include="..\src\Display\UI\LabelWidget.cpp" />
+    <ClCompile Include="..\src\Display\UI\SplashMessageWidget.cpp" />
+    <ClCompile Include="..\src\Display\UI\TextFieldWidget.cpp" />
+    <ClCompile Include="..\src\Display\UI\UIWidget.cpp" />
+    <ClCompile Include="..\src\Gameplay\Gameplay.cpp" />
+    <ClCompile Include="..\src\Gameplay\Map.cpp" />
+    <ClCompile Include="..\src\General\Application.cpp" />
+    <ClCompile Include="..\src\General\CRC32.cpp" />
+    <ClCompile Include="..\src\General\FramerateLimiter.cpp" />
+    <ClCompile Include="..\src\General\Log.cpp" />
+    <ClCompile Include="..\src\General\Main.cpp" />
+    <ClCompile Include="..\src\General\Vector2.cpp" />
+    <ClCompile Include="..\src\Network\NetworkManager.cpp" />
+    <ClCompile Include="..\src\Network\PacketHandlers.cpp" />
+    <ClCompile Include="..\src\Network\SmartPacket.cpp" />
+    <ClCompile Include="..\src\Objects\Creature.cpp" />
+    <ClCompile Include="..\src\Objects\Player.cpp" />
+    <ClCompile Include="..\src\Objects\Unit.cpp" />
+    <ClCompile Include="..\src\Objects\WorldObject.cpp" />
+    <ClCompile Include="..\src\Resources\ResourceManager.cpp" />
+    <ClCompile Include="..\src\Resources\ResourceStreamManager.cpp" />
+    <ClCompile Include="..\src\Stages\ConnectingStage.cpp" />
+    <ClCompile Include="..\src\Stages\GameStage.cpp" />
+    <ClCompile Include="..\src\Stages\LobbyStage.cpp" />
+    <ClCompile Include="..\src\Stages\MenuStage.cpp" />
+    <ClCompile Include="..\src\Storage\FileStorage.cpp" />
+    <ClCompile Include="..\src\Storage\ImageStorage.cpp" />
+    <ClCompile Include="..\src\Storage\MapStorage.cpp" />
+    <ClCompile Include="..\src\Storage\StorageManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\dep\SQLite\database.h" />
+    <ClInclude Include="..\dep\SQLite\libsqlitewrapped.h" />
+    <ClInclude Include="..\dep\SQLite\query.h" />
+    <ClInclude Include="..\dep\SQLite\sqlite3.h" />
+    <ClInclude Include="..\dep\SQLite\sqlite3ext.h" />
+    <ClInclude Include="..\src\Display\Colors.h" />
+    <ClInclude Include="..\src\Display\Drawing.h" />
+    <ClInclude Include="..\src\Display\UI\ButtonWidget.h" />
+    <ClInclude Include="..\src\Display\UI\LabelWidget.h" />
+    <ClInclude Include="..\src\Display\UI\SplashMessageWidget.h" />
+    <ClInclude Include="..\src\Display\UI\TextFieldWidget.h" />
+    <ClInclude Include="..\src\Display\UI\UIEnums.h" />
+    <ClInclude Include="..\src\Display\UI\UIWidget.h" />
+    <ClInclude Include="..\src\Gameplay\Gameplay.h" />
+    <ClInclude Include="..\src\Gameplay\Map.h" />
+    <ClInclude Include="..\src\Gameplay\MapEnums.h" />
+    <ClInclude Include="..\src\General\Application.h" />
+    <ClInclude Include="..\src\General\Compatibility.h" />
+    <ClInclude Include="..\src\General\CRC32.h" />
+    <ClInclude Include="..\src\General\FramerateLimiter.h" />
+    <ClInclude Include="..\src\General\General.h" />
+    <ClInclude Include="..\src\General\GlobalActions.h" />
+    <ClInclude Include="..\src\General\Log.h" />
+    <ClInclude Include="..\src\General\SharedEnums.h" />
+    <ClInclude Include="..\src\General\Singleton.h" />
+    <ClInclude Include="..\src\General\Vector2.h" />
+    <ClInclude Include="..\src\Network\NetworkManager.h" />
+    <ClInclude Include="..\src\Network\Opcodes.h" />
+    <ClInclude Include="..\src\Network\PacketHandlers.h" />
+    <ClInclude Include="..\src\Network\SmartPacket.h" />
+    <ClInclude Include="..\src\Objects\AnimEnums.h" />
+    <ClInclude Include="..\src\Objects\Creature.h" />
+    <ClInclude Include="..\src\Objects\ObjectEnums.h" />
+    <ClInclude Include="..\src\Objects\Player.h" />
+    <ClInclude Include="..\src\Objects\Unit.h" />
+    <ClInclude Include="..\src\Objects\UpdateFields.h" />
+    <ClInclude Include="..\src\Objects\WorldObject.h" />
+    <ClInclude Include="..\src\Resources\ResourceManager.h" />
+    <ClInclude Include="..\src\Resources\ResourceStreamManager.h" />
+    <ClInclude Include="..\src\Stages\Stages.h" />
+    <ClInclude Include="..\src\Storage\FileStorage.h" />
+    <ClInclude Include="..\src\Storage\ImageStorage.h" />
+    <ClInclude Include="..\src\Storage\MapStorage.h" />
+    <ClInclude Include="..\src\Storage\StorageManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\dep\SQLite\sqlite3.def" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
