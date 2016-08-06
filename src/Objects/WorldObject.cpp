@@ -246,6 +246,11 @@ uint32_t WorldObject::GetMapId()
     return m_mapId;
 }
 
+Map* WorldObject::GetMap()
+{
+    return sGameplay->GetMap();
+}
+
 void WorldObject::InitializeObject(uint64_t guid)
 {
     // at first, create updatefields - without them, we can do nothing!

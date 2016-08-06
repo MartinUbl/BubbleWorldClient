@@ -22,6 +22,7 @@
 #include "AnimEnums.h"
 #include "Drawing.h"
 #include "Colors.h"
+#include "Map.h"
 
 Unit::Unit(ObjectType type) : WorldObject(type), m_moveVector(0.0f, 0.0f)
 {
@@ -44,14 +45,33 @@ void Unit::Update()
         uint32_t moveDiff = getMSTimeDiff(m_lastMovementUpdate, getMSTime());
         if (moveDiff >= 1)
         {
+            // the vector is reduced to unit size, coefficient is "number of milliseconds passed"
             float coef = (float)moveDiff;
-            m_position.x += m_moveVector.x * coef;
-            m_position.y += m_moveVector.y * coef;
+            // store old position
+            float oldX = m_position.x;
+            float oldY = m_position.y;
 
+            // move on X axis
+            m_position.x += m_moveVector.x * coef;
+            // secure boundaries
             if (m_position.x < 0.0f)
                 m_position.x = 0.0f;
+
+            // secure "walkable" types
+            MapField* mf = GetMap()->GetField((uint32_t)m_position.x, (uint32_t)m_position.y);
+            if (!mf || !CanMoveOn((MapFieldType)mf->type, mf->flags))
+                m_position.x = oldX;
+
+            // move on Y axis
+            m_position.y += m_moveVector.y * coef;
+            // secure boundaries
             if (m_position.y < 0.0f)
                 m_position.y = 0.0f;
+
+            // secure "walkable" types
+            mf = GetMap()->GetField((uint32_t)m_position.x, (uint32_t)m_position.y);
+            if (!mf || !CanMoveOn((MapFieldType)mf->type, mf->flags))
+                m_position.y = oldY;
 
             m_lastMovementUpdate = getMSTime();
             sDrawing->SetCanvasRedrawFlag();
@@ -78,6 +98,12 @@ void Unit::InitializeObject(uint64_t guid)
 void Unit::CreateUpdateFields()
 {
     WorldObject::CreateUpdateFields();
+}
+
+bool Unit::CanMoveOn(MapFieldType type, uint32_t flags)
+{
+    // for now just ground type
+    return (type == MFT_GROUND);
 }
 
 void Unit::OnMoveStart()

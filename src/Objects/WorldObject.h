@@ -62,6 +62,7 @@ struct Position
 class Unit;
 class Player;
 class Creature;
+class Map;
 
 /*
  * Class serving as base class for all objects in game
@@ -101,6 +102,8 @@ class WorldObject
         void SetMapId(uint32_t mapId);
         // retrieves current map ID
         uint32_t GetMapId();
+        // retrieves current map
+        Map* GetMap();
 
         // retrieves object GUID
         uint64_t GetGUID();

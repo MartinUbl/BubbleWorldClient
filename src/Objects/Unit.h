@@ -23,6 +23,8 @@
 #include "WorldObject.h"
 #include "Vector2.h"
 
+enum MapFieldType;
+
 // this is the number which we use to multiply movement vector
 #define MOVEMENT_UPDATE_UNIT_FRACTION 0.001f
 
@@ -54,6 +56,8 @@ class Unit : public WorldObject
         TalkType GetDisplayChatType();
         // talks using specified type and supplied message
         void Talk(TalkType type, const char* str);
+        // can the unit move over this field type?
+        bool CanMoveOn(MapFieldType type, uint32_t flags);
 
     protected:
         // protected constructor; instantiate child classes only
