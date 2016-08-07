@@ -410,3 +410,18 @@ void WorldObject::SetVisibilityIndex(uint32_t visibilityIndex)
 {
     m_visibilityIndex = visibilityIndex;
 }
+
+void WorldObject::SetInView(bool state)
+{
+    m_isInView = state;
+}
+
+bool WorldObject::IsInView()
+{
+    return m_isInView;
+}
+
+SDL_Rect* WorldObject::GetViewRect()
+{
+    return &m_viewRect;
+}

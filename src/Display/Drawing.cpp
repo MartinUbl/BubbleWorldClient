@@ -19,6 +19,7 @@
 
 #include "General.h"
 #include "Drawing.h"
+#include "Application.h"
 #include "UI/UIEnums.h"
 #include "UI/UIWidget.h"
 #include "Log.h"
@@ -265,6 +266,9 @@ void Drawing::DrawWorld()
     }
 
     SDL_Texture* tmptxt;
+    SDL_Rect* viewRect;
+
+    WorldObject* hoverObj = nullptr;
 
     // draw objects on map
     ObjectVector const& objvect = map->GetObjectVisibilityVector();
@@ -283,13 +287,35 @@ void Drawing::DrawWorld()
                 imgres = sResourceManager->GetImageRecord(textureId);
                 if (imgres && imgres->animSpriteRects.size() != 0)
                 {
+                    viewRect = obj->GetViewRect();
                     // determine position, move by view, move to be placed into "texture base center"
-                    target.x = baseX + (uint32_t)((float)MAP_FIELD_PX_SIZE_X * obj->GetPositionX()) - imgres->metadata->baseCenterX;
-                    target.y = baseY + (uint32_t)((float)MAP_FIELD_PX_SIZE_Y * obj->GetPositionY()) - imgres->metadata->baseCenterY;
-                    target.w = imgres->metadata->sizeX;
-                    target.h = imgres->metadata->sizeY;
+                    viewRect->x = baseX + (uint32_t)((float)MAP_FIELD_PX_SIZE_X * obj->GetPositionX()) - imgres->metadata->baseCenterX;
+                    viewRect->y = baseY + (uint32_t)((float)MAP_FIELD_PX_SIZE_Y * obj->GetPositionY()) - imgres->metadata->baseCenterY;
+                    // TODO: cache this
+                    viewRect->w = imgres->metadata->sizeX;
+                    viewRect->h = imgres->metadata->sizeY;
+
+                    // if the object is out of view, sorry
+                    if (viewRect->x + viewRect->w < 0 || viewRect->y + viewRect->h < 0 || viewRect->x > m_windowWidth || viewRect->y > m_windowHeight)
+                    {
+                        obj->SetInView(false);
+                        continue;
+                    }
+
+                    // if the object is under mouse cursor, set hover; also exclude local player
+                    if (sApplication->GetMouseX() >= viewRect->x && sApplication->GetMouseX() <= viewRect->x + viewRect->w &&
+                        sApplication->GetMouseY() >= viewRect->y && sApplication->GetMouseY() <= viewRect->y + viewRect->h &&
+                        obj != sGameplay->GetPlayer())
+                    {
+                        hoverObj = obj;
+                    }
+
+                    obj->SetInView(true);
+                    target.x = viewRect->x;
+                    target.y = viewRect->y;
+
                     // draw
-                    DrawTexture(texture, &imgres->animSpriteRects[obj->GetAnimFrame()], &target);
+                    DrawTexture(texture, &imgres->animSpriteRects[obj->GetAnimFrame()], viewRect);
 
                     // if it's unit
                     if (obj->GetType() == OTYPE_CREATURE || obj->GetType() == OTYPE_PLAYER)
@@ -334,6 +360,9 @@ void Drawing::DrawWorld()
             }
         }
     }
+
+    // finally set hover object
+    sGameplay->SetHoverObject(hoverObj);
 
     // draw chat frame
     target.x = 10;
@@ -449,6 +478,11 @@ UIWidget* Drawing::FindUIWidgetById(uint32_t id)
     }
 
     return nullptr;
+}
+
+bool Drawing::HasUIWidgetHover()
+{
+    return m_hoverElement != nullptr;
 }
 
 void Drawing::OnMouseMove(int32_t x, int32_t y)

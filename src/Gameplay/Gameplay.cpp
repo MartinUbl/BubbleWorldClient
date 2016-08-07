@@ -34,7 +34,7 @@
 
 Gameplay::Gameplay()
 {
-    //
+    m_hoverObject = nullptr;
 }
 
 void Gameplay::ConnectToServer()
@@ -473,4 +473,67 @@ void Gameplay::AddChatMessage(TalkType type, const char* author, const char* mes
 std::list<ChatMessageRecord> const& Gameplay::GetChatMessages()
 {
     return m_chatMessages;
+}
+
+void Gameplay::SetHoverObject(WorldObject* obj)
+{
+    // do not set hover object, when UI has hover - the UI has higher priority since it's "above" world
+    if (sDrawing->HasUIWidgetHover())
+    {
+        m_hoverObject = nullptr;
+        sDrawing->SetMouseCursor(MOUSE_CURSOR_NORMAL);
+        return;
+    }
+
+    m_hoverObject = obj;
+
+    // if some object gained hover, change cursor
+    if (m_hoverObject)
+    {
+        // "talkable" creatures
+        if (m_hoverObject->GetType() == OTYPE_CREATURE && m_hoverObject->ToCreature()->CanTalkTo())
+            sDrawing->SetMouseCursor(MOUSE_CURSOR_TALK);
+        else
+            sDrawing->SetMouseCursor(MOUSE_CURSOR_NORMAL);
+
+        // TODO: cursors for player, gameobject, enemy creature, ..
+    }
+    else
+        sDrawing->SetMouseCursor(MOUSE_CURSOR_NORMAL);
+}
+
+WorldObject* Gameplay::GetHoverObject()
+{
+    return m_hoverObject;
+}
+
+void Gameplay::CheckHoverObject()
+{
+    if (!m_currentMap)
+        return;
+
+    WorldObject* obj;
+    SDL_Rect* viewRect;
+
+    WorldObject* hoverObj = nullptr;
+
+    ObjectVector const& objvector = m_currentMap->GetObjectVisibilityVector();
+    for (uint32_t i = 0; i < objvector.size(); i++)
+    {
+        obj = objvector[i];
+
+        if (!obj->IsInView() || obj == m_player)
+            continue;
+
+        viewRect = obj->GetViewRect();
+
+        // if the object is under mouse cursor, set hover
+        if (sApplication->GetMouseX() >= viewRect->x && sApplication->GetMouseX() <= viewRect->x + viewRect->w &&
+            sApplication->GetMouseY() >= viewRect->y && sApplication->GetMouseY() <= viewRect->y + viewRect->h)
+        {
+            hoverObj = obj;
+        }
+    }
+
+    SetHoverObject(hoverObj);
 }

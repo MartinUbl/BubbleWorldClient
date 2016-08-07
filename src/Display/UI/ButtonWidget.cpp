@@ -190,7 +190,7 @@ void ButtonWidget::OnMouseClick(bool left, bool press)
     else // on release, perform action
     {
         // check if we are still inside button widget
-        if (IsCoordsInside(sApplication->getMouseX(), sApplication->getMouseY()))
+        if (IsCoordsInside(sApplication->GetMouseX(), sApplication->GetMouseY()))
         {
             // signal UI event to application
             sApplication->SignalUIEvent(m_id, left ? UIACTION_MOUSE_CLICK_LEFT : UIACTION_MOUSE_CLICK_RIGHT);

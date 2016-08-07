@@ -111,6 +111,7 @@ int Application::Run()
                     m_mouseX = ev.motion.x;
                     m_mouseY = ev.motion.y;
                     sDrawing->OnMouseMove(m_mouseX, m_mouseY);
+                    sGameplay->CheckHoverObject();
                     break;
                 // mouse click - signal UI and stage
                 case SDL_MOUSEBUTTONDOWN:

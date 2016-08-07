@@ -166,6 +166,13 @@ class WorldObject
         // sets visibility index
         void SetVisibilityIndex(uint32_t visibilityIndex);
 
+        // sets the "in view" flag
+        void SetInView(bool state);
+        // is the object in view?
+        bool IsInView();
+        // retrieves view rectangle
+        SDL_Rect* GetViewRect();
+
     protected:
         // protected constructor; instantiate only child classes
         WorldObject(ObjectType type);
@@ -188,6 +195,10 @@ class WorldObject
         uint32_t m_animFrame;
         // current animation timer
         uint32_t m_animTimer;
+        // is currently in view?
+        bool m_isInView;
+        // current view rectangle
+        SDL_Rect m_viewRect;
 
     private:
         // prerendered name texture

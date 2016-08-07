@@ -42,3 +42,12 @@ void Creature::CreateUpdateFields()
     m_updateFields = new uint32_t[UNIT_FIELDS_END];
     memset(m_updateFields, 0, sizeof(uint32_t) * UNIT_FIELDS_END);
 }
+
+bool Creature::CanTalkTo()
+{
+    // TODO: faction system, for now, 1 = universal friend, 2 = universal enemy
+    if (GetUInt32Value(UNIT_FIELD_FACTION) == 1)
+        return true;
+
+    return false;
+}

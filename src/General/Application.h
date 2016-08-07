@@ -50,9 +50,9 @@ class Application
         int Run();
 
         // retrieves mouse X coordinate within window
-        int32_t getMouseX() { return m_mouseX; };
+        int32_t GetMouseX() { return m_mouseX; };
         // retrieves mouse Y coordinate within window
-        int32_t getMouseY() { return m_mouseY; };
+        int32_t GetMouseY() { return m_mouseY; };
 
         // sets stage type (real stage is updated in next update tick)
         void SetStageType(StageType type);

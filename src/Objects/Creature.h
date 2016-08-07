@@ -33,6 +33,9 @@ class Creature : public Unit
 
         virtual void InitializeObject(uint64_t guid);
 
+        // can player talk to this creature?
+        bool CanTalkTo();
+
     protected:
         virtual void CreateUpdateFields();
 

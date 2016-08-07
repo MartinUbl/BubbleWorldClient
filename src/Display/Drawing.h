@@ -106,6 +106,8 @@ class Drawing
         void DestroyUI();
         // retrieves UI widget by its ID (has to be previously set by SetID on widget instance)
         UIWidget* FindUIWidgetById(uint32_t id);
+        // does some UI widget have hover now?
+        bool HasUIWidgetHover();
         // called when mouse moved
         void OnMouseMove(int32_t x, int32_t y);
         // called when mouse click event fired

@@ -138,6 +138,13 @@ class Gameplay
         // retrieves chat message history
         std::list<ChatMessageRecord> const& GetChatMessages();
 
+        // sets hover object (the mouse is over that object)
+        void SetHoverObject(WorldObject* obj);
+        // retrieves object, over which the mouse currently is
+        WorldObject* GetHoverObject();
+        // checks if the mouse changes hover object
+        void CheckHoverObject();
+
     protected:
         // protected singleton constructor
         Gameplay();
@@ -166,6 +173,8 @@ class Gameplay
         std::unordered_map<uint64_t, time_t> m_nameQuerySent;
         // cached names of objects
         std::unordered_map<uint64_t, std::string> m_cachedNames;
+        // current mouseover object
+        WorldObject* m_hoverObject;
 };
 
 #define sGameplay Singleton<Gameplay>::getInstance()

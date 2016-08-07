@@ -23,6 +23,7 @@
 #include "MapStorage.h"
 #include "StorageManager.h"
 #include "WorldObject.h"
+#include "Gameplay.h"
 
 Map::Map()
 {
@@ -227,6 +228,10 @@ void Map::RemoveWorldObject(WorldObject* obj)
         m_objectGuidMap.erase(itr);
 
     RemoveObjectFromVisibilityVector(obj->GetVisibilityIndex());
+
+    // clear hover from object, if marked
+    if (sGameplay->GetHoverObject() == obj)
+        sGameplay->SetHoverObject(nullptr);
 }
 
 void Map::RemoveWorldObject(uint64_t guid)
