@@ -31,4 +31,9 @@
 #define BWCOLOR_CHAT_TEXT       {  0,   0,   0}
 #define BWCOLOR_CHAT_SERVERMSG  {255,  96,  96}
 
+#define BWCOLOR_NAME_PLAYER     {255, 255, 255}
+#define BWCOLOR_NAME_NPC_FRIEND {127, 255, 127}
+#define BWCOLOR_NAME_NPC_ENEMY  {255, 127, 127}
+#define BWCOLOR_NAME_GAMEOBJECT {  0,   0,   0}
+
 #endif

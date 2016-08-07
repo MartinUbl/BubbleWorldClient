@@ -209,6 +209,8 @@ void Map::AddWorldObject(WorldObject* obj)
 
     m_objectGuidMap[obj->GetGUID()] = obj;
     m_objectSet.insert(obj);
+
+    obj->OnAddedToMap();
 }
 
 void Map::RemoveWorldObject(WorldObject* obj)

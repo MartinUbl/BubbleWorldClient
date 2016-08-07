@@ -76,6 +76,8 @@ class WorldObject
         virtual void InitializeObject(uint64_t guid);
         // updates object, internal timers, movement, ..
         virtual void Update();
+        // after the object was added to map
+        virtual void OnAddedToMap();
 
         // sets object name
         void SetName(const char* name);

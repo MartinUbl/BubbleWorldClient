@@ -27,10 +27,11 @@
 #include "StorageManager.h"
 #include "Drawing.h"
 #include "Gameplay.h"
+#include "Colors.h"
 
 WorldObject::WorldObject(ObjectType type) : m_position(0.0f, 0.0f), m_mapId(0), m_objectType(type)
 {
-    m_animId = ANIM_IDLE;
+    m_animId = -1;
     m_animFrame = 0;
     m_animTimer = getMSTime();
 
@@ -187,8 +188,29 @@ SDL_Texture* WorldObject::GetNameTexture()
     if (m_nameTexture)
         return m_nameTexture;
 
+    SDL_Color col;
+    switch (GetType())
+    {
+        case OTYPE_PLAYER:
+            col = BWCOLOR_NAME_PLAYER;
+            break;
+        case OTYPE_CREATURE:
+            // TODO: faction system, for now, 1 = universal friend, 2 = universal enemy
+            if (GetUInt32Value(UNIT_FIELD_FACTION) == 1)
+                col = BWCOLOR_NAME_NPC_FRIEND;
+            else
+                col = BWCOLOR_NAME_NPC_ENEMY;
+            break;
+        case OTYPE_GAMEOBJECT:
+            col = BWCOLOR_NAME_GAMEOBJECT;
+            break;
+        default:
+            col = defaultTextColor;
+            break;
+    }
+
     // render name texture
-    SDL_Surface* tmp = sDrawing->RenderFont(FONT_NAME_TITLE, m_name.c_str());
+    SDL_Surface* tmp = sDrawing->RenderFont(FONT_NAME_TITLE, m_name.c_str(), col);
     if (tmp)
         m_nameTexture = SDL_CreateTextureFromSurface(sDrawing->GetRenderer(), tmp);
 
@@ -258,8 +280,6 @@ void WorldObject::InitializeObject(uint64_t guid)
 
     // set GUID
     SetUInt64Value(OBJECT_FIELD_GUID, guid);
-    // ask server for name
-    sGameplay->SendNameQuery(guid);
 }
 
 void WorldObject::CreateUpdateFields()
@@ -277,6 +297,14 @@ uint32_t WorldObject::GetAnimFrame()
     return m_animFrame;
 }
 
+void WorldObject::OnAddedToMap()
+{
+    SetAnimId(ANIM_IDLE);
+
+    // ask server for name (or take one from cache)
+    sGameplay->SendNameQuery(GetGUID());
+}
+
 void WorldObject::SetAnimId(uint32_t animId)
 {
     // attempt to change animation to the same - do nothing
@@ -291,28 +319,41 @@ void WorldObject::SetAnimId(uint32_t animId)
 
     // retrieve animation record
     ImageAnimationDatabaseRecord* animres = sImageStorage->GetImageAnimationRecord(textureId, animId);
-    // no anim?
-    if (!animres)
+    
+    // IDLE animation may not have animation specified, but defaults to 0th frame
+    if (animId == ANIM_IDLE)
     {
-        // IDLE animation may not have animation specified, but defaults to 0th frame
-        if (animId == ANIM_IDLE)
+        // movement animations should "end" at their first frame when going idle
+        if (_isMovementAnim(m_animId))
         {
-            // movement animations should "end" at their first frame when going idle
-            if (_isMovementAnim(m_animId))
+            ImageAnimationDatabaseRecord* animres2 = sImageStorage->GetImageAnimationRecord(textureId, m_animId);
+            if (animres2)
             {
-                ImageAnimationDatabaseRecord* animres2 = sImageStorage->GetImageAnimationRecord(textureId, m_animId);
-                if (animres2)
-                    m_animFrame = animres2->frameBegin;
+                m_animFrame = animres2->frameBegin;
+                m_animTimer = 0;
             }
+            else
+                m_animTimer = getMSTime();
+        }
+        else
+        {
+            if (animres)
+                m_animFrame = animres->frameBegin;
             else
                 m_animFrame = 0;
 
-            m_animId = ANIM_IDLE;
             m_animTimer = getMSTime();
-            sDrawing->SetCanvasRedrawFlag();
         }
+
+        m_animId = ANIM_IDLE;
+        sDrawing->SetCanvasRedrawFlag();
+
         return;
     }
+
+    // no anim? return
+    if (!animres)
+        return;
 
     m_animId = animId;
     // movement animations should skip their beginning frame - it's considered "idle" frame
@@ -332,7 +373,7 @@ void WorldObject::Update()
     {
         ImageAnimationDatabaseRecord* animres = sImageStorage->GetImageAnimationRecord(textureId, m_animId);
         // if it's time to change animation frame...
-        if (animres && getMSTimeDiff(m_animTimer, getMSTime()) > animres->frameDelay)
+        if (animres && m_animTimer && getMSTimeDiff(m_animTimer, getMSTime()) > animres->frameDelay)
         {
             // refresh timer, move frame by one
             m_animTimer = getMSTime();

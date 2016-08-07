@@ -31,7 +31,9 @@ enum UnitUpdateFields
 {
     UNIT_FIELD_LEVEL                            = OBJECT_FIELDS_END + 0x0000,
     UNIT_FIELD_MOVEMENT_SPEED                   = OBJECT_FIELDS_END + 0x0001,
-    UNIT_FIELDS_END                             = OBJECT_FIELDS_END + 0x0002
+    UNIT_FIELD_FACTION                          = OBJECT_FIELDS_END + 0x0002,
+    UNIT_FIELD_HEALTH                           = OBJECT_FIELDS_END + 0x0003,
+    UNIT_FIELDS_END                             = OBJECT_FIELDS_END + 0x0004
 };
 
 enum PlayerUpdateFields
