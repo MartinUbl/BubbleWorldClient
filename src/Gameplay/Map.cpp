@@ -27,6 +27,7 @@
 Map::Map()
 {
     m_header.mapId = 0;
+    m_objectVisibilityVector.clear();
 }
 
 Map::~Map()
@@ -59,8 +60,8 @@ void Map::InitEmpty(MapHeader &mh)
 void Map::Update()
 {
     // update all objects on map
-    for (ObjectSet::iterator itr = m_objectSet.begin(); itr != m_objectSet.end(); ++itr)
-        (*itr)->Update();
+    for (uint32_t i = 0; i < m_objectVisibilityVector.size(); i++)
+        m_objectVisibilityVector[i]->Update();
 }
 
 void Map::SetId(uint32_t id)
@@ -204,24 +205,28 @@ void Map::SaveToFile()
 
 void Map::AddWorldObject(WorldObject* obj)
 {
-    if (m_objectSet.find(obj) != m_objectSet.end())
+    if (m_objectGuidMap.find(obj->GetGUID()) != m_objectGuidMap.end())
         return;
 
     m_objectGuidMap[obj->GetGUID()] = obj;
-    m_objectSet.insert(obj);
+
+    m_objectVisibilityVector.push_back(obj);
+    obj->SetVisibilityIndex((uint32_t)m_objectVisibilityVector.size() - 1);
+    CheckObjectVisibilityIndex(obj->GetVisibilityIndex());
 
     obj->OnAddedToMap();
 }
 
 void Map::RemoveWorldObject(WorldObject* obj)
 {
-    if (m_objectSet.find(obj) == m_objectSet.end())
+    if (m_objectGuidMap.find(obj->GetGUID()) == m_objectGuidMap.end())
         return;
 
     ObjectGuidMap::iterator itr = m_objectGuidMap.find(obj->GetGUID());
     if (itr != m_objectGuidMap.end())
         m_objectGuidMap.erase(itr);
-    m_objectSet.erase(obj);
+
+    RemoveObjectFromVisibilityVector(obj->GetVisibilityIndex());
 }
 
 void Map::RemoveWorldObject(uint64_t guid)
@@ -240,12 +245,104 @@ WorldObject* Map::GetWorldObject(uint64_t guid)
     return itr->second;
 }
 
-ObjectSet const& Map::GetObjectSet()
+ObjectVector const& Map::GetObjectVisibilityVector()
 {
-    return m_objectSet;
+    return m_objectVisibilityVector;
 }
 
 ObjectGuidMap const& Map::GetObjectGuidMap()
 {
     return m_objectGuidMap;
+}
+
+void Map::CheckObjectVisibilityIndex(uint32_t visibilityIndex)
+{
+    if (m_objectVisibilityVector.size() <= 1)
+        return;
+
+    bool changed = false;
+    uint32_t index = visibilityIndex;
+    int8_t direction = 0; // 0 = no dir, -1 = to the left (further from screen, in back), +1 = to the right (closer to screen, on top)
+
+    WorldObject* tmp;
+
+    do
+    {
+        if (direction == 0)
+        {
+            // we are not the closest object...
+            if (index != m_objectVisibilityVector.size() - 1)
+            {
+                // and the object on the right ("should be closer") is further
+                if (m_objectVisibilityVector[index + 1]->GetPositionY() < m_objectVisibilityVector[index]->GetPositionY())
+                {
+                    // direction to the right ("closer")
+                    direction = +1;
+                    continue;
+                }
+            }
+
+            // we are not the furthest object...
+            if (index != 0)
+            {
+                // ...and object on the left ("should be further") is closer
+                if (m_objectVisibilityVector[index - 1]->GetPositionY() > m_objectVisibilityVector[index]->GetPositionY())
+                {
+                    // direction to the left ("further")
+                    direction = -1;
+                    continue;
+                }
+            }
+
+            // no changes needed
+            break;
+        }
+        // to the right ("closer")
+        else if (direction == +1)
+        {
+            // we reached the last element, or the following element is closer
+            if (index == m_objectVisibilityVector.size() - 1 || m_objectVisibilityVector[index + 1]->GetPositionY() > m_objectVisibilityVector[index]->GetPositionY())
+                break;
+
+            // swap objects in vector
+            tmp = m_objectVisibilityVector[index + 1];
+            m_objectVisibilityVector[index + 1] = m_objectVisibilityVector[index];
+            m_objectVisibilityVector[index] = tmp;
+
+            m_objectVisibilityVector[index]->SetVisibilityIndex(index);
+            m_objectVisibilityVector[index + 1]->SetVisibilityIndex(index + 1);
+
+            index++;
+        }
+        // to the left ("further")
+        else
+        {
+            // we reached the first element, or the following element is further
+            if (index == 0 || m_objectVisibilityVector[index - 1]->GetPositionY() < m_objectVisibilityVector[index]->GetPositionY())
+                break;
+
+            // swap objects in vector
+            tmp = m_objectVisibilityVector[index - 1];
+            m_objectVisibilityVector[index - 1] = m_objectVisibilityVector[index];
+            m_objectVisibilityVector[index] = tmp;
+
+            m_objectVisibilityVector[index]->SetVisibilityIndex(index);
+            m_objectVisibilityVector[index - 1]->SetVisibilityIndex(index - 1);
+
+            index--;
+        }
+    } while (true); // the loop is ended by inner "break" statement
+}
+
+void Map::RemoveObjectFromVisibilityVector(uint32_t visibilityIndex)
+{
+    // move all objects in visibility vector by one place left
+    for (uint32_t i = visibilityIndex; i < m_objectVisibilityVector.size() - 1; i++)
+    {
+        m_objectVisibilityVector[i] = m_objectVisibilityVector[i + 1];
+        m_objectVisibilityVector[i]->SetVisibilityIndex(i);
+    }
+
+    // resize vector; this will cut the last element
+    m_objectVisibilityVector.resize(m_objectVisibilityVector.size() - 1);
 }

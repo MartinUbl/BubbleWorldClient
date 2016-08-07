@@ -28,6 +28,7 @@
 #include "Drawing.h"
 #include "Gameplay.h"
 #include "Colors.h"
+#include "Map.h"
 
 WorldObject::WorldObject(ObjectType type) : m_position(0.0f, 0.0f), m_mapId(0), m_objectType(type)
 {
@@ -231,6 +232,9 @@ void WorldObject::SetPosition(float x, float y)
 {
     m_position.x = x;
     m_position.y = y;
+
+    if (GetMap())
+        GetMap()->CheckObjectVisibilityIndex(m_visibilityIndex);
 }
 
 void WorldObject::SetPositionX(float x)
@@ -241,6 +245,9 @@ void WorldObject::SetPositionX(float x)
 void WorldObject::SetPositionY(float y)
 {
     m_position.y = y;
+
+    if (GetMap())
+        GetMap()->CheckObjectVisibilityIndex(m_visibilityIndex);
 }
 
 Position const& WorldObject::GetPosition()
@@ -392,4 +399,14 @@ void WorldObject::Update()
             sDrawing->SetCanvasRedrawFlag();
         }
     }
+}
+
+uint32_t WorldObject::GetVisibilityIndex() const
+{
+    return m_visibilityIndex;
+}
+
+void WorldObject::SetVisibilityIndex(uint32_t visibilityIndex)
+{
+    m_visibilityIndex = visibilityIndex;
 }

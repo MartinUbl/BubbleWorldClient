@@ -48,30 +48,34 @@ void Unit::Update()
             // the vector is reduced to unit size, coefficient is "number of milliseconds passed"
             float coef = (float)moveDiff;
             // store old position
-            float oldX = m_position.x;
-            float oldY = m_position.y;
+            float newX;
+            float newY;
 
             // move on X axis
-            m_position.x += m_moveVector.x * coef;
+            newX = m_position.x + m_moveVector.x * coef;
             // secure boundaries
-            if (m_position.x < 0.0f)
-                m_position.x = 0.0f;
+            if (newX < 0.0f)
+                newX = 0.0f;
 
             // secure "walkable" types
-            MapField* mf = GetMap()->GetField((uint32_t)m_position.x, (uint32_t)m_position.y);
+            MapField* mf = GetMap()->GetField((uint32_t)newX, (uint32_t)m_position.y);
             if (!mf || !CanMoveOn((MapFieldType)mf->type, mf->flags))
-                m_position.x = oldX;
+                newX = m_position.x;
+
+            SetPositionX(newX);
 
             // move on Y axis
-            m_position.y += m_moveVector.y * coef;
+            newY = m_position.y + m_moveVector.y * coef;
             // secure boundaries
-            if (m_position.y < 0.0f)
-                m_position.y = 0.0f;
+            if (newY < 0.0f)
+                newY = 0.0f;
 
             // secure "walkable" types
-            mf = GetMap()->GetField((uint32_t)m_position.x, (uint32_t)m_position.y);
+            mf = GetMap()->GetField((uint32_t)m_position.x, (uint32_t)newY);
             if (!mf || !CanMoveOn((MapFieldType)mf->type, mf->flags))
-                m_position.y = oldY;
+                newY = m_position.y;
+
+            SetPositionY(newY);
 
             m_lastMovementUpdate = getMSTime();
             sDrawing->SetCanvasRedrawFlag();

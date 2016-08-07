@@ -229,10 +229,10 @@ void Drawing::DrawWorld()
     SDL_Texture* tmptxt;
 
     // draw objects on map
-    ObjectSet const& objset = map->GetObjectSet();
-    for (ObjectSet::iterator itr = objset.begin(); itr != objset.end(); ++itr)
+    ObjectVector const& objvect = map->GetObjectVisibilityVector();
+    for (uint32_t i = 0; i < objvect.size(); i++)
     {
-        obj = (*itr);
+        obj = objvect[i];
 
         // get image ID
         textureId = obj->GetUInt32Value(OBJECT_FIELD_IMAGEID);

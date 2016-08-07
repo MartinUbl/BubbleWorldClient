@@ -67,7 +67,7 @@ typedef std::vector<MapFieldRow> MapFieldMap;
 
 class WorldObject;
 
-typedef std::set<WorldObject*> ObjectSet;
+typedef std::vector<WorldObject*> ObjectVector;
 typedef std::map<uint64_t, WorldObject*> ObjectGuidMap;
 
 /*
@@ -119,13 +119,17 @@ class Map
         // retrieves object from map using its guid
         WorldObject* GetWorldObject(uint64_t guid);
 
-        // retrieves object set
-        ObjectSet const& GetObjectSet();
+        // retrieves object vector (for i.e. drawing purposes; the vector is sorted by visibility)
+        ObjectVector const& GetObjectVisibilityVector();
         // retrieves object guid map
         ObjectGuidMap const& GetObjectGuidMap();
 
+        // checks object in visibility vector for changes
+        void CheckObjectVisibilityIndex(uint32_t visibilityIndex);
+
     protected:
-        //
+        // removes object from visibility vector and reorders the vector so no holes appear
+        void RemoveObjectFromVisibilityVector(uint32_t visibilityIndex);
 
     private:
         // stored header
@@ -134,7 +138,7 @@ class Map
         MapFieldMap m_fields;
 
         // object set
-        ObjectSet m_objectSet;
+        ObjectVector m_objectVisibilityVector;
         // object guid map (key = guid)
         ObjectGuidMap m_objectGuidMap;
 };

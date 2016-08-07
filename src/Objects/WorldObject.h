@@ -161,6 +161,10 @@ class WorldObject
         virtual uint32_t GetAnimFrame();
         // sets animation ID
         void SetAnimId(uint32_t animId);
+        // retrieves visibility index
+        uint32_t GetVisibilityIndex() const;
+        // sets visibility index
+        void SetVisibilityIndex(uint32_t visibilityIndex);
 
     protected:
         // protected constructor; instantiate only child classes
@@ -188,6 +192,8 @@ class WorldObject
     private:
         // prerendered name texture
         SDL_Texture* m_nameTexture;
+        // object visibility index (index to m_objectVisibilityVector in Map class)
+        uint32_t m_visibilityIndex;
 };
 
 #endif
