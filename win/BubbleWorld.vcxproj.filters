@@ -142,6 +142,9 @@
     <ClCompile Include="..\src\General\FramerateLimiter.cpp">
       <Filter>src\General</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Display\MouseCursor.cpp">
+      <Filter>src\Display</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\General\Application.h">
@@ -275,6 +278,9 @@
     </ClInclude>
     <ClInclude Include="..\src\General\FramerateLimiter.h">
       <Filter>src\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\MouseCursor.h">
+      <Filter>src\Display</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

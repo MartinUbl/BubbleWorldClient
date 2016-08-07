@@ -66,7 +66,16 @@ struct FontParam
 // default text color used when no color specified
 static const SDL_Color defaultTextColor = { 255, 255, 255 };
 
+// enumeration of application cursor IDs
+enum AppMouseCursors
+{
+    MOUSE_CURSOR_NORMAL = 0,
+    MOUSE_CURSOR_TALK = 1,
+    MAX_MOUSE_CURSOR
+};
+
 class UIWidget;
+class MouseCursor;
 
 /*
  * Singleton class maintaining everything related to drawing
@@ -119,6 +128,10 @@ class Drawing
         uint16_t GetFontHeight(AppFonts fontId, bool useAscent = false);
         // queries SDL_Texture for its dimensions
         void GetTextureSize(SDL_Texture* texture, int* w, int* h);
+        // sets current mouse cursor type
+        void SetMouseCursor(AppMouseCursors type);
+        // retrieves current mouse cursor type
+        AppMouseCursors GetCurrentMouseCursor();
         // sets flag to redraw whole canvas
         void SetCanvasRedrawFlag();
 
@@ -149,6 +162,10 @@ class Drawing
         UIWidget* m_focusElement;
         // cached application fonts
         TTF_Font* m_fonts[MAX_FONT];
+        // cached application mouse cursors
+        MouseCursor* m_mouseCursors[MAX_MOUSE_CURSOR];
+        // current mouse cursor used
+        AppMouseCursors m_currentMouseCursor;
 
         // main window width
         int32_t m_windowWidth;

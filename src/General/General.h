@@ -59,9 +59,11 @@
 #ifdef _DEBUG
 #define DATA_DIR "bin/data/"
 #define FONTS_DATA_DIR "bin/data/fonts/"
+#define CURSORS_DATA_DIR "bin/data/cursors/"
 #else
 #define DATA_DIR "data/"
 #define FONTS_DATA_DIR "data/fonts/"
+#define CURSORS_DATA_DIR "data/cursors/"
 #endif
 
 // version

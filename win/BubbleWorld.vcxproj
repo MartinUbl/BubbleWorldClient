@@ -157,6 +157,7 @@
     <ClCompile Include="..\src\Display\UI\SplashMessageWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\TextFieldWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\UIWidget.cpp" />
+    <ClCompile Include="..\src\Display\MouseCursor.cpp" />
     <ClCompile Include="..\src\Gameplay\Gameplay.cpp" />
     <ClCompile Include="..\src\Gameplay\Map.cpp" />
     <ClCompile Include="..\src\General\Application.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="..\src\Display\UI\TextFieldWidget.h" />
     <ClInclude Include="..\src\Display\UI\UIEnums.h" />
     <ClInclude Include="..\src\Display\UI\UIWidget.h" />
+    <ClInclude Include="..\src\Display\MouseCursor.h" />
     <ClInclude Include="..\src\Gameplay\Gameplay.h" />
     <ClInclude Include="..\src\Gameplay\Map.h" />
     <ClInclude Include="..\src\Gameplay\MapEnums.h" />

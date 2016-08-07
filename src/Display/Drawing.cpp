@@ -27,6 +27,7 @@
 #include "Gameplay.h"
 #include "ImageStorage.h"
 #include "ResourceManager.h"
+#include "MouseCursor.h"
 
 // application font settings
 static const FontParam appFontParams[MAX_FONT] = {
@@ -38,12 +39,19 @@ static const FontParam appFontParams[MAX_FONT] = {
     { "GFSNeohellenic.ttf", 15 }                // FONT_CHAT
 };
 
+// application cursor filenames
+static const char* appCursorFilenames[MAX_MOUSE_CURSOR] = {
+    "main.png",
+    "talk.png"
+};
+
 Drawing::Drawing()
 {
     m_canvasRedraw = true;
     m_hoverElement = nullptr;
     m_focusElement = nullptr;
     m_drawWorld = false;
+    m_currentMouseCursor = MAX_MOUSE_CURSOR;
 }
 
 Drawing::~Drawing()
@@ -107,9 +115,39 @@ bool Drawing::Init()
             std::string path = FONTS_DATA_DIR + std::string(appFontParams[i].fontName);
             m_fonts[i] = TTF_OpenFont(path.c_str(), appFontParams[i].size);
         }
+
+        if (!m_fonts[i])
+            sLog->Error("Could not load font ID %i", i);
     }
 
+    // initialize application mouse cursors
+    for (int i = 0; i < MAX_MOUSE_CURSOR; i++)
+    {
+        std::string path = CURSORS_DATA_DIR + std::string(appCursorFilenames[i]);
+        m_mouseCursors[i] = MouseCursor::LoadFromFile(path.c_str());
+
+        if (!m_mouseCursors[i])
+            sLog->Error("Could not load mouse cursor ID %i", i);
+    }
+
+    // set normal mouse cursor
+    SetMouseCursor(MOUSE_CURSOR_NORMAL);
+
     return true;
+}
+
+void Drawing::SetMouseCursor(AppMouseCursors type)
+{
+    if (type == MAX_MOUSE_CURSOR || !m_mouseCursors[type])
+        return;
+
+    SDL_SetCursor(m_mouseCursors[type]->GetSDLCursor());
+    m_currentMouseCursor = type;
+}
+
+AppMouseCursors Drawing::GetCurrentMouseCursor()
+{
+    return m_currentMouseCursor;
 }
 
 void Drawing::SetCanvasRedrawFlag()
