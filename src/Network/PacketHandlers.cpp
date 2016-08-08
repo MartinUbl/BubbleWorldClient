@@ -256,7 +256,27 @@ void PacketHandlers::HandleCreateObject(SmartPacket& packet)
 
 void PacketHandlers::HandleUpdateObject(SmartPacket& packet)
 {
-    // TODO
+    uint64_t guid = packet.ReadUInt64();
+    // find object
+    WorldObject* obj = sGameplay->GetForeignObject(guid);
+    if (!obj)
+        return;
+
+    uint32_t field, value;
+
+    uint8_t count = packet.ReadUInt8();
+
+    // update every field server sent
+    for (uint8_t pos = 0; pos < count; pos++)
+    {
+        field = packet.ReadUInt32();
+        value = packet.ReadUInt32();
+
+        obj->SetUInt32Value(field, value);
+    }
+
+    // most likely something happened that would need redraw
+    sDrawing->SetCanvasRedrawFlag();
 }
 
 void PacketHandlers::HandleDestroyObject(SmartPacket& packet)
