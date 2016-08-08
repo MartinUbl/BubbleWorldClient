@@ -51,7 +51,7 @@ class SplashMessageWidget : public UIWidget
 {
     public:
         // static factory method for creating splash message widgets
-        static SplashMessageWidget* Create(SplashMessageType type, int32_t baseWidth, AppFonts fontId, const char* text, bool cancellable = true, SDL_Color textColor = defaultTextColor);
+        static SplashMessageWidget* Create(SplashMessageType type, int32_t baseWidth, AppFonts fontId, const wchar_t* text, bool cancellable = true, SDL_Color textColor = defaultTextColor);
 
         // updates prerendered texture
         void UpdateCanvas();
@@ -59,7 +59,7 @@ class SplashMessageWidget : public UIWidget
         void OnMouseClick(bool left, bool press);
 
         // sets foreground text
-        void SetText(const char* text);
+        void SetText(const wchar_t* text);
         // sets foreground text color
         void SetTextColor(uint8_t r, uint8_t g, uint8_t b);
         // sets background color
@@ -83,7 +83,7 @@ class SplashMessageWidget : public UIWidget
 
     private:
         // text drawn
-        std::string m_text;
+        std::wstring m_text;
         // text color
         SDL_Color m_textColor;
         // background color (determined by type)

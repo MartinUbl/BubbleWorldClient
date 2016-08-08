@@ -36,7 +36,7 @@ WorldObject::WorldObject(ObjectType type) : m_position(0.0f, 0.0f), m_mapId(0), 
     m_animFrame = 0;
     m_animTimer = getMSTime();
 
-    m_name = "???";
+    m_name = L"???";
     m_nameTexture = nullptr;
 }
 
@@ -167,7 +167,7 @@ float WorldObject::GetFloatValue(uint32_t field)
     return *((float*)(&val));
 }
 
-void WorldObject::SetName(const char* name)
+void WorldObject::SetName(const wchar_t* name)
 {
     m_name = name;
     if (m_nameTexture)
@@ -178,7 +178,7 @@ void WorldObject::SetName(const char* name)
     sDrawing->SetCanvasRedrawFlag();
 }
 
-const char* WorldObject::GetName()
+const wchar_t* WorldObject::GetName()
 {
     return m_name.c_str();
 }
@@ -211,7 +211,7 @@ SDL_Texture* WorldObject::GetNameTexture()
     }
 
     // render name texture
-    SDL_Surface* tmp = sDrawing->RenderFont(FONT_NAME_TITLE, m_name.c_str(), col);
+    SDL_Surface* tmp = sDrawing->RenderFontUnicode(FONT_NAME_TITLE, m_name.c_str(), col);
     if (tmp)
         m_nameTexture = SDL_CreateTextureFromSurface(sDrawing->GetRenderer(), tmp);
 

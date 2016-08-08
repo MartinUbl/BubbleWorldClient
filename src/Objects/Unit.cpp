@@ -222,11 +222,11 @@ TalkType Unit::GetDisplayChatType()
     return m_displayChatTalkType;
 }
 
-void Unit::Talk(TalkType type, const char* str)
+void Unit::Talk(TalkType type, const wchar_t* str)
 {
     m_displayChatTalkType = type;
 
-    SDL_Surface* textsurf = sDrawing->RenderFontWrapped(FONT_CHAT, str, 200, BWCOLOR_BLUE);
+    SDL_Surface* textsurf = sDrawing->RenderFontWrappedUnicode(FONT_CHAT, str, 200, BWCOLOR_BLUE);
     if (!textsurf)
         return;
 

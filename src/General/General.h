@@ -34,6 +34,8 @@
 #include <mutex>
 #include <condition_variable>
 #include <stdint.h>
+#include <codecvt>
+#include <locale>
 
 // platform-specific headers
 #ifdef _WIN32

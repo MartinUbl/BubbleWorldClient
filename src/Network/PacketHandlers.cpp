@@ -98,7 +98,7 @@ void PacketHandlers::HandleCharacterList(SmartPacket& packet)
         lrec = new CharacterListRecord;
 
         lrec->guid = packet.ReadUInt32();
-        lrec->name = packet.ReadString().c_str();
+        lrec->name = UTF8ToWString(packet.ReadString());
         lrec->level = packet.ReadUInt16();
 
         sGameplay->AddCharacterToList(lrec);
@@ -537,7 +537,7 @@ void PacketHandlers::HandleNameQueryResponse(SmartPacket& packet)
     std::string name = packet.ReadString();
 
     // just pass the reply to gameplay class
-    sGameplay->SignalNameQueryResolved(guid, (name.length() == 0) ? "???" : name.c_str());
+    sGameplay->SignalNameQueryResolved(guid, (name.length() == 0) ? L"???" : UTF8ToWString(name).c_str());
 }
 
 void PacketHandlers::HandleMoveStartDir(SmartPacket& packet)
@@ -607,6 +607,8 @@ void PacketHandlers::HandleChatMessage(SmartPacket& packet)
     uint64_t guid = packet.ReadUInt64();
     std::string msg = packet.ReadString();
 
+    std::wstring wmsg = UTF8ToWString(msg);
+
     // server messages have its own behaviour
     if (type != TALK_SERVER_MESSAGE)
     {
@@ -615,12 +617,12 @@ void PacketHandlers::HandleChatMessage(SmartPacket& packet)
         if (talkunit && (talkunit->GetType() == OTYPE_CREATURE || talkunit->GetType() == OTYPE_PLAYER))
         {
             // talk and add to history
-            talkunit->ToUnit()->Talk((TalkType)type, msg.c_str());
-            sGameplay->AddChatMessage((TalkType)type, talkunit->GetName(), msg.c_str());
+            talkunit->ToUnit()->Talk((TalkType)type, wmsg.c_str());
+            sGameplay->AddChatMessage((TalkType)type, talkunit->GetName(), wmsg.c_str());
         }
     }
     else
     {
-        sGameplay->AddChatMessage((TalkType)type, nullptr, msg.c_str());
+        sGameplay->AddChatMessage((TalkType)type, nullptr, wmsg.c_str());
     }
 }

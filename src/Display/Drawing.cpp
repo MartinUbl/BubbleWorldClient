@@ -423,7 +423,10 @@ void Drawing::RemoveUIWidget(UIWidget* widget)
     if (widget == m_hoverElement)
         m_hoverElement = nullptr;
     if (widget == m_focusElement)
+    {
         m_focusElement = nullptr;
+        sApplication->SetTextInputModeState(false);
+    }
 
     SetCanvasRedrawFlag();
 }
@@ -465,6 +468,8 @@ void Drawing::DestroyUI()
 
     // clear widget list
     m_widgetList.clear();
+
+    sApplication->SetTextInputModeState(false);
 
     SetCanvasRedrawFlag();
 }
@@ -559,14 +564,38 @@ bool Drawing::OnKeyPress(int key, bool press)
     return m_focusElement->OnKeyPress(key, press);
 }
 
+void Drawing::OnTextInput(char* orig)
+{
+    std::unique_lock<std::mutex> lck(m_widgetListMtx);
+
+    // we propagate keypress event only to focused elements
+    if (!m_focusElement)
+        return;
+
+    std::wstring utf = UTF8ToWString(orig);
+
+    for (uint32_t i = 0; i < utf.size(); i++)
+        m_focusElement->OnTextInput(utf[i]);
+}
+
 SDL_Surface* Drawing::RenderFont(AppFonts fontId, const char* message, SDL_Color color)
 {
     return TTF_RenderText_Solid(m_fonts[fontId], message, color);
 }
 
+SDL_Surface* Drawing::RenderFontUnicode(AppFonts fontId, const wchar_t* message, SDL_Color color)
+{
+    return TTF_RenderUNICODE_Solid(m_fonts[fontId], (const uint16_t*)message, color);
+}
+
 SDL_Surface* Drawing::RenderFontWrapped(AppFonts fontId, const char* message, uint32_t width, SDL_Color color)
 {
     return TTF_RenderText_Blended_Wrapped(m_fonts[fontId], message, color, width);
+}
+
+SDL_Surface* Drawing::RenderFontWrappedUnicode(AppFonts fontId, const wchar_t* message, uint32_t width, SDL_Color color)
+{
+    return TTF_RenderUNICODE_Blended_Wrapped(m_fonts[fontId], (const uint16_t*)message, color, width);
 }
 
 uint16_t Drawing::GetFontHeight(AppFonts fontId, bool useAscent)

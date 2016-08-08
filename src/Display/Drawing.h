@@ -114,6 +114,8 @@ class Drawing
         void OnMouseClick(bool left, bool press);
         // called when key press has been fired; returns true if captured, false to propagate further
         bool OnKeyPress(int key, bool press);
+        // called when in text input and the text is typed
+        void OnTextInput(char* orig);
         // sets focus to element
         void SetFocusElement(UIWidget* widget);
         // should the world be drawn?
@@ -124,8 +126,12 @@ class Drawing
         void DrawTexture(SDL_Texture* texture, SDL_Rect* target);
         // renders font on surface
         SDL_Surface* RenderFont(AppFonts fontId, const char* message, SDL_Color color = defaultTextColor);
+        // renders font on surface using unicode methods
+        SDL_Surface* RenderFontUnicode(AppFonts fontId, const wchar_t* message, SDL_Color color = defaultTextColor);
         // renders font on surface and wraps words to specified width
         SDL_Surface* RenderFontWrapped(AppFonts fontId, const char* message, uint32_t width, SDL_Color color = defaultTextColor);
+        // renders font on surface and wraps words to specified width
+        SDL_Surface* RenderFontWrappedUnicode(AppFonts fontId, const wchar_t* message, uint32_t width, SDL_Color color = defaultTextColor);
         // retrieves font height from font metrics
         uint16_t GetFontHeight(AppFonts fontId, bool useAscent = false);
         // queries SDL_Texture for its dimensions

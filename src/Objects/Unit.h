@@ -55,7 +55,7 @@ class Unit : public WorldObject
         // retrieves type of chat message
         TalkType GetDisplayChatType();
         // talks using specified type and supplied message
-        void Talk(TalkType type, const char* str);
+        void Talk(TalkType type, const wchar_t* str);
         // can the unit move over this field type?
         bool CanMoveOn(MapFieldType type, uint32_t flags);
 

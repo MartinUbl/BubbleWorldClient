@@ -31,7 +31,7 @@
 void ConnectingStage::OnEnter()
 {
     // just add "Loading..." text to the center of screen
-    LabelWidget* lw = LabelWidget::Create(0, 0, FONT_CAPTION, "Loading...");
+    LabelWidget* lw = LabelWidget::Create(0, 0, FONT_CAPTION, L"Loading...");
     lw->SetPositionXLambda([lw](int32_t win_w, int32_t) {
         return win_w / 2 - lw->GetWidth() / 2;
     });

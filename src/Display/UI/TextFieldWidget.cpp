@@ -33,7 +33,7 @@ TextFieldWidget::TextFieldWidget() : UIWidget(UIWIDGET_TEXTFIELD)
         m_prerenderedStates[i] = nullptr;
 }
 
-TextFieldWidget* TextFieldWidget::Create(int32_t x, int32_t y, int32_t baseWidth, AppFonts fontId, const char* text, SDL_Color bgColor, SDL_Color textColor)
+TextFieldWidget* TextFieldWidget::Create(int32_t x, int32_t y, int32_t baseWidth, AppFonts fontId, const wchar_t* text, SDL_Color bgColor, SDL_Color textColor)
 {
     TextFieldWidget* tw = new TextFieldWidget();
 
@@ -58,7 +58,7 @@ TextFieldWidget* TextFieldWidget::Create(int32_t x, int32_t y, int32_t baseWidth
     return tw;
 }
 
-void TextFieldWidget::SetText(const char* text)
+void TextFieldWidget::SetText(const wchar_t* text)
 {
     m_text = text;
 
@@ -113,7 +113,7 @@ void TextFieldWidget::SetBaseWidth(int32_t width)
     UpdateCanvas();
 }
 
-const char* TextFieldWidget::GetText()
+const wchar_t* TextFieldWidget::GetText()
 {
     return m_text.c_str();
 }
@@ -145,14 +145,14 @@ void TextFieldWidget::UpdateCanvas()
     }
 
     // build text used for displaying
-    std::string displayText;
+    std::wstring displayText;
     // when no masking character, display the text itself
     if (m_maskCharacter == 0)
-        displayText = (m_text.size() == 0) ? " " : m_text.c_str();
+        displayText = (m_text.size() == 0) ? L" " : m_text.c_str();
     else
     {
         // mask the text using exact same number of masking characters
-        displayText = (m_text.size() == 0) ? " " : "";
+        displayText = (m_text.size() == 0) ? L" " : L"";
         for (size_t i = 0; i < m_text.size(); i++)
             displayText += m_maskCharacter;
     }
@@ -164,7 +164,7 @@ void TextFieldWidget::UpdateCanvas()
     for (int i = 0; i < MAX_TEXTFIELD_STATE; i++)
     {
         // create text surface by rendering display text
-        SDL_Surface* textsurf = sDrawing->RenderFont(m_fontId, (i == TEXTFIELD_STATE_FOCUS) ? (displayText + " |").c_str() : displayText.c_str(), m_textColor);
+        SDL_Surface* textsurf = sDrawing->RenderFontUnicode(m_fontId, (i == TEXTFIELD_STATE_FOCUS) ? (displayText + L" |").c_str() : displayText.c_str(), m_textColor);
         SDL_Rect textrect = { m_paddingH, m_paddingV, num_min(textsurf->w, m_baseWidth), textsurf->h };
         // clip maximum of *basewidth* pixels from text
         SDL_Rect srcrect = { textsurf->w > m_baseWidth ? textsurf->w - m_baseWidth : 0, 0, num_min(textsurf->w, m_baseWidth), textsurf->h };
@@ -204,11 +204,15 @@ void TextFieldWidget::UpdateCanvas()
 void TextFieldWidget::OnFocus()
 {
     SetTextFieldState(TEXTFIELD_STATE_FOCUS);
+
+    sApplication->SetTextInputModeState(true);
 }
 
 void TextFieldWidget::OnBlur()
 {
     SetTextFieldState(TEXTFIELD_STATE_NORMAL);
+
+    sApplication->SetTextInputModeState(false);
 }
 
 bool TextFieldWidget::OnKeyPress(int key, bool press)
@@ -216,31 +220,20 @@ bool TextFieldWidget::OnKeyPress(int key, bool press)
     // process only "on press" events
     if (press)
     {
-        // transform letters according to shift/capslock state
-        // TODO: rework this system to unicode, utilizing SDL unicode support; this will then be no longer needed
-        if ((sApplication->GetShiftState() && !sApplication->GetCapsLockState()) || sApplication->GetCapsLockState())
-        {
-            if (key >= 'a' && key <= 'z')
-                key = key - 'a' + 'A';
-        }
-
-        // consider this range "printable" characters
-        if (key >= SDLK_SPACE && key < SDLK_DELETE)
-        {
-            SetText((m_text + (char)key).c_str());
-        }
-        // backspace - delete last letter if the length is sufficient
-        else if (key == SDLK_BACKSPACE)
+        if (key == SDLK_BACKSPACE)
         {
             if (m_text.size() > 0)
                 SetText(m_text.substr(0, m_text.size() - 1).c_str());
+            return true;
         }
-        // keys we don't capture (to allow i.e. closing chat action, etc.)
-        else if (key == SDLK_ESCAPE || (key >= SDLK_F1 && key <= SDLK_F12) || key == SDLK_RETURN)
-            return false;
     }
 
-    return true;
+    return false;
+}
+
+void TextFieldWidget::OnTextInput(wchar_t chr)
+{
+    SetText((m_text + chr).c_str());
 }
 
 void TextFieldWidget::SetMaskCharacter(char chr)

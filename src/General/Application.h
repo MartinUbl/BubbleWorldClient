@@ -64,6 +64,9 @@ class Application
         // signals global event to application
         void SignalGlobalEvent(GlobalActionIDs actionId, void* actionParam = nullptr);
 
+        // sets SDL textinput mode state
+        void SetTextInputModeState(bool enabled);
+
         // retrieves SHIFT key state
         bool GetShiftState() { return m_keyMod[KEYMOD_SHIFT]; };
         // retrieves CTRL key state

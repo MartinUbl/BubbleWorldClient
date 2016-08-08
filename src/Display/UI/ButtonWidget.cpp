@@ -32,7 +32,7 @@ ButtonWidget::ButtonWidget() : UIWidget(UIWIDGET_BUTTON)
         m_prerenderedStates[i] = nullptr;
 }
 
-ButtonWidget* ButtonWidget::Create(int32_t x, int32_t y, AppFonts fontId, const char* text, SDL_Color bgColor, SDL_Color textColor)
+ButtonWidget* ButtonWidget::Create(int32_t x, int32_t y, AppFonts fontId, const wchar_t* text, SDL_Color bgColor, SDL_Color textColor)
 {
     ButtonWidget* bw = new ButtonWidget();
 
@@ -55,7 +55,7 @@ ButtonWidget* ButtonWidget::Create(int32_t x, int32_t y, AppFonts fontId, const 
     return bw;
 }
 
-void ButtonWidget::SetText(const char* text)
+void ButtonWidget::SetText(const wchar_t* text)
 {
     m_text = text;
 
@@ -134,7 +134,7 @@ void ButtonWidget::UpdateCanvas()
     for (int i = 0; i < MAX_BUTTON_STATE; i++)
     {
         // create text surface and render text
-        SDL_Surface* textsurf = sDrawing->RenderFont(m_fontId, m_text.c_str(), m_textColor);
+        SDL_Surface* textsurf = sDrawing->RenderFontUnicode(m_fontId, m_text.c_str(), m_textColor);
         SDL_Rect textrect = { m_paddingH, m_paddingV, textsurf->w, textsurf->h };
         // adjust dimensions only when the size is not forced by method call
         if (!m_forcedWidth)

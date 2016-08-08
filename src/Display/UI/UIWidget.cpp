@@ -207,6 +207,11 @@ bool UIWidget::OnKeyPress(int key, bool press)
     return false;
 }
 
+void UIWidget::OnTextInput(wchar_t chr)
+{
+    // no implicit behaviour
+}
+
 void UIWidget::OnFocus()
 {
     // no implicit behaviour

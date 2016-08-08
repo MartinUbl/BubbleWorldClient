@@ -198,7 +198,7 @@ void Gameplay::SignalMapLoaded(uint32_t mapId)
     sNetwork->SendPacket(pkt);
 }
 
-void Gameplay::SignalNameQueryResolved(uint64_t guid, const char* name)
+void Gameplay::SignalNameQueryResolved(uint64_t guid, const wchar_t* name)
 {
     if (!name)
         return;
@@ -274,11 +274,13 @@ void Gameplay::SendNameQuery(uint64_t guid)
     m_nameQuerySent[guid] = time(nullptr);
 }
 
-void Gameplay::SendChat(TalkType type, const char* str)
+void Gameplay::SendChat(TalkType type, const wchar_t* str)
 {
+    std::string encoded = WStringToUTF8(str);
+
     SmartPacket pkt(CP_CHAT_MESSAGE);
     pkt.WriteUInt8(type);
-    pkt.WriteString(str);
+    pkt.WriteString(encoded.c_str());
     sNetwork->SendPacket(pkt);
 }
 
@@ -422,17 +424,17 @@ WorldObject* Gameplay::GetForeignObject(uint64_t guid)
     return m_currentMap->GetWorldObject(guid);
 }
 
-void Gameplay::AddChatMessage(TalkType type, const char* author, const char* message)
+void Gameplay::AddChatMessage(TalkType type, const wchar_t* author, const wchar_t* message)
 {
-    std::string toPrint = "";
+    std::wstring toPrint = L"";
 
     // server messages behaves differently
     if (type == TALK_SERVER_MESSAGE)
     {
         // prepare base
-        std::string printmsg = std::string("[Server]: ") + message;
+        std::wstring printmsg = std::wstring(L"[Server]: ") + message;
         // render wrapped message
-        SDL_Surface* msgsurf = sDrawing->RenderFontWrapped(FONT_CHAT, printmsg.c_str(), CHAT_MSG_FRAME_WIDTH, BWCOLOR_CHAT_SERVERMSG);
+        SDL_Surface* msgsurf = sDrawing->RenderFontWrappedUnicode(FONT_CHAT, printmsg.c_str(), CHAT_MSG_FRAME_WIDTH, BWCOLOR_CHAT_SERVERMSG);
 
         // store it for drawing
         m_chatMessages.push_back({ SDL_CreateTextureFromSurface(sDrawing->GetRenderer(), msgsurf), time(nullptr) });
@@ -443,9 +445,9 @@ void Gameplay::AddChatMessage(TalkType type, const char* author, const char* mes
     else
     {
         // prepare name and message surfaces
-        SDL_Surface* namesurf = sDrawing->RenderFont(FONT_CHAT, author, BWCOLOR_CHAT_PLAYERNAME);
-        std::string printmsg = std::string(": ") + message;
-        SDL_Surface* msgsurf = sDrawing->RenderFontWrapped(FONT_CHAT, printmsg.c_str(), CHAT_MSG_FRAME_WIDTH - namesurf->w, BWCOLOR_CHAT_TEXT);
+        SDL_Surface* namesurf = sDrawing->RenderFontUnicode(FONT_CHAT, author, BWCOLOR_CHAT_PLAYERNAME);
+        std::wstring printmsg = std::wstring(L": ") + message;
+        SDL_Surface* msgsurf = sDrawing->RenderFontWrappedUnicode(FONT_CHAT, printmsg.c_str(), CHAT_MSG_FRAME_WIDTH - namesurf->w, BWCOLOR_CHAT_TEXT);
 
         // create one bigger surface to contain both
         SDL_Surface* dstsurf = SDL_CreateRGBSurface(0, CHAT_MSG_FRAME_WIDTH, num_max(msgsurf->h, namesurf->h), 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);

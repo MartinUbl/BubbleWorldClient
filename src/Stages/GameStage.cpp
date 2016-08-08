@@ -53,20 +53,28 @@ void GameStage::OnMouseClick(bool left, bool press)
 
 void GameStage::OnKeyPress(int key, bool press)
 {
+    // several keys are handled only when no text input in progress
+    if (!SDL_IsTextInputActive())
+    {
+        switch (key)
+        {
+            case SDLK_w:
+                sGameplay->MovementKeyEvent(MOVE_UP, press);
+                break;
+            case SDLK_a:
+                sGameplay->MovementKeyEvent(MOVE_LEFT, press);
+                break;
+            case SDLK_s:
+                sGameplay->MovementKeyEvent(MOVE_DOWN, press);
+                break;
+            case SDLK_d:
+                sGameplay->MovementKeyEvent(MOVE_RIGHT, press);
+                break;
+        }
+    }
+
     switch (key)
     {
-        case SDLK_w:
-            sGameplay->MovementKeyEvent(MOVE_UP, press);
-            break;
-        case SDLK_a:
-            sGameplay->MovementKeyEvent(MOVE_LEFT, press);
-            break;
-        case SDLK_s:
-            sGameplay->MovementKeyEvent(MOVE_DOWN, press);
-            break;
-        case SDLK_d:
-            sGameplay->MovementKeyEvent(MOVE_RIGHT, press);
-            break;
         case SDLK_RETURN:
             // on enter press, open chat or send chat message
             if (press)
@@ -76,7 +84,7 @@ void GameStage::OnKeyPress(int key, bool press)
                 else
                 {
                     // send only when the text has at least one character
-                    if (strlen(m_chatWidget->GetText()) > 0)
+                    if (wcslen(m_chatWidget->GetText()) > 0)
                         sGameplay->SendChat(TALK_SAY, m_chatWidget->GetText());
                     CloseChat();
                 }
@@ -102,7 +110,7 @@ void GameStage::OnGlobalAction(GlobalActionIDs actionId, void* actionParam)
 void GameStage::OpenChat()
 {
     // create chat widget
-    m_chatWidget = TextFieldWidget::Create(0, 0, 300, FONT_CHAT, "", BWCOLOR_CHATFIELDBG, BWCOLOR_BLACK);
+    m_chatWidget = TextFieldWidget::Create(0, 0, 300, FONT_CHAT, L"", BWCOLOR_CHATFIELDBG, BWCOLOR_BLACK);
 
     // position it to lower center part of screen
     TextFieldWidget* cap = m_chatWidget;

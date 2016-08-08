@@ -27,7 +27,7 @@ SplashMessageWidget::SplashMessageWidget() : UIWidget(UIWIDGET_SPLASHMESSAGE)
     //
 }
 
-SplashMessageWidget* SplashMessageWidget::Create(SplashMessageType type, int32_t baseWidth, AppFonts fontId, const char* text, bool cancellable, SDL_Color textColor)
+SplashMessageWidget* SplashMessageWidget::Create(SplashMessageType type, int32_t baseWidth, AppFonts fontId, const wchar_t* text, bool cancellable, SDL_Color textColor)
 {
     SplashMessageWidget* smw = new SplashMessageWidget();
 
@@ -66,7 +66,7 @@ SplashMessageWidget* SplashMessageWidget::Create(SplashMessageType type, int32_t
     return smw;
 }
 
-void SplashMessageWidget::SetText(const char* text)
+void SplashMessageWidget::SetText(const wchar_t* text)
 {
     m_text = text;
 
@@ -147,7 +147,7 @@ void SplashMessageWidget::UpdateCanvas()
         SDL_DestroyTexture(m_widgetCanvas);
 
     // render text surface wrapped to base width
-    SDL_Surface* textsurf = sDrawing->RenderFontWrapped(m_fontId, m_text.c_str(), m_baseWidth, m_textColor);
+    SDL_Surface* textsurf = sDrawing->RenderFontWrappedUnicode(m_fontId, m_text.c_str(), m_baseWidth, m_textColor);
     // create background surface
     SDL_Surface* destsurf = SDL_CreateRGBSurface(0, m_baseWidth + 2 * m_paddingH, textsurf->h + 2 * m_paddingV, 32, 0, 0, 0, 0);
     // fill with background color

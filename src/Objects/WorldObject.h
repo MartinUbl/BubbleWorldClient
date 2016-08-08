@@ -80,9 +80,9 @@ class WorldObject
         virtual void OnAddedToMap();
 
         // sets object name
-        void SetName(const char* name);
+        void SetName(const wchar_t* name);
         // retrieves object name
-        const char* GetName();
+        const wchar_t* GetName();
         // retrieves prerendered name texture
         SDL_Texture* GetNameTexture();
 
@@ -180,7 +180,7 @@ class WorldObject
         virtual void CreateUpdateFields();
 
         // object name
-        std::string m_name;
+        std::wstring m_name;
         // object position
         Position m_position;
         // updatefields

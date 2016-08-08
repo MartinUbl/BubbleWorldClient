@@ -27,7 +27,7 @@ LabelWidget::LabelWidget() : UIWidget(UIWIDGET_LABEL)
     //
 }
 
-LabelWidget* LabelWidget::Create(int32_t x, int32_t y, AppFonts fontId, const char* text, SDL_Color textColor)
+LabelWidget* LabelWidget::Create(int32_t x, int32_t y, AppFonts fontId, const wchar_t* text, SDL_Color textColor)
 {
     LabelWidget* lw = new LabelWidget();
 
@@ -47,7 +47,7 @@ LabelWidget* LabelWidget::Create(int32_t x, int32_t y, AppFonts fontId, const ch
     return lw;
 }
 
-void LabelWidget::SetText(const char* text)
+void LabelWidget::SetText(const wchar_t* text)
 {
     m_text = text;
 
@@ -81,7 +81,7 @@ void LabelWidget::UpdateCanvas()
         SDL_DestroyTexture(m_widgetCanvas);
 
     // render text on surface and cache size
-    SDL_Surface* textsurf = sDrawing->RenderFont(m_fontId, m_text.c_str(), m_textColor);
+    SDL_Surface* textsurf = sDrawing->RenderFontUnicode(m_fontId, m_text.c_str(), m_textColor);
     m_widgetCanvas = SDL_CreateTextureFromSurface(sDrawing->GetRenderer(), textsurf);
     sDrawing->GetTextureSize(m_widgetCanvas, &m_dimensions.w, &m_dimensions.h);
 

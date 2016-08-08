@@ -49,6 +49,16 @@ bool Application::Init()
 {
     // log some info
     sLog->Info("BubbleWorld " APP_VERSION_STR);
+
+#ifdef WIN32
+    std::locale::global(std::locale("czech"));
+    setlocale(LC_ALL, "czech");
+    _wsetlocale(LC_ALL, L"czech");
+#else
+    std::locale::global(std::locale("cs_CZ"));
+    setlocale(LC_ALL, "cs_CZ");
+#endif
+
     // init SDL library
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
     {
@@ -156,6 +166,10 @@ int Application::Run()
                         if (m_stage)
                             m_stage->OnKeyPress(ev.key.keysym.sym, false);
                     }
+                    break;
+                // text input event - when focused to textfield widget
+                case SDL_TEXTINPUT:
+                    sDrawing->OnTextInput(ev.text.text);
                     break;
             }
         }
@@ -272,4 +286,16 @@ void Application::SignalGlobalEvent(GlobalActionIDs actionId, void* actionParam)
 {
     if (m_stage)
         m_stage->OnGlobalAction(actionId, actionParam);
+}
+
+void Application::SetTextInputModeState(bool enabled)
+{
+    // allow only state change (ternary condition due to compiler complaining about types)
+    if ((enabled ^ (SDL_IsTextInputActive() ? 1 : 0)) == 0)
+        return;
+
+    if (enabled)
+        SDL_StartTextInput();
+    else if (!enabled)
+        SDL_StopTextInput();
 }

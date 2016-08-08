@@ -90,6 +90,8 @@ class UIWidget
         virtual void OnMouseClick(bool left, bool press);
         // when the widget has focus and user presses key; returns true when captured, false to propagate key press further
         virtual bool OnKeyPress(int key, bool press);
+        // when the text is typed
+        virtual void OnTextInput(wchar_t chr);
         // when the widget gains focus
         virtual void OnFocus();
         // when the widget loses focus

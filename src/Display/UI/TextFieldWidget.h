@@ -50,7 +50,7 @@ class TextFieldWidget : public UIWidget
 {
     public:
         // static factory method for creating text field widget
-        static TextFieldWidget* Create(int32_t x, int32_t y, int32_t baseWidth, AppFonts fontId, const char* text, SDL_Color bgColor = defaultTextFieldBackgroundColor, SDL_Color textColor = defaultTextColor);
+        static TextFieldWidget* Create(int32_t x, int32_t y, int32_t baseWidth, AppFonts fontId, const wchar_t* text, SDL_Color bgColor = defaultTextFieldBackgroundColor, SDL_Color textColor = defaultTextColor);
 
         // updates prerendered textures
         void UpdateCanvas();
@@ -58,9 +58,10 @@ class TextFieldWidget : public UIWidget
         void OnFocus();
         void OnBlur();
         bool OnKeyPress(int key, bool press);
+        void OnTextInput(wchar_t chr);
 
         // sets foreground text
-        void SetText(const char* text);
+        void SetText(const wchar_t* text);
         // sets foreground text color
         void SetTextColor(uint8_t r, uint8_t g, uint8_t b);
         // sets background color
@@ -78,7 +79,7 @@ class TextFieldWidget : public UIWidget
         // sets character for masking (i.e. '*' for passwords, ..)
         void SetMaskCharacter(char chr);
         // retrieves text entered by user
-        const char* GetText();
+        const wchar_t* GetText();
 
     protected:
         // protected constructor; use factory method Create for instantiation
@@ -86,7 +87,7 @@ class TextFieldWidget : public UIWidget
 
     private:
         // text entered by user
-        std::string m_text;
+        std::wstring m_text;
         // character used for masking real text
         char m_maskCharacter;
         // text color used

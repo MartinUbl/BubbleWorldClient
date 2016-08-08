@@ -38,7 +38,7 @@ enum LobbyStageElementIDs
 void LobbyStage::OnEnter()
 {
     // display splash message and wait for server response
-    sDrawing->AddUIWidget(SplashMessageWidget::Create(SPLASH_TYPE_NORMAL, 500, FONT_MAIN, "Fetching character list...", false));
+    sDrawing->AddUIWidget(SplashMessageWidget::Create(SPLASH_TYPE_NORMAL, 500, FONT_MAIN, L"Fetching character list...", false));
 }
 
 void LobbyStage::OnDraw()
@@ -76,7 +76,7 @@ void LobbyStage::OnGlobalAction(GlobalActionIDs actionId, void* actionParam)
             // remove existing splash messages
             sDrawing->RemoveUIWidgetsOfType(UIWIDGET_SPLASHMESSAGE);
             // add title
-            sDrawing->AddUIWidget(LabelWidget::Create(20, 20, FONT_MAIN, "Character list", BWCOLOR_BUZNABLUE));
+            sDrawing->AddUIWidget(LabelWidget::Create(20, 20, FONT_MAIN, L"Character list", BWCOLOR_BUZNABLUE));
 
             m_characterListGUIDs.clear();
 
@@ -88,7 +88,7 @@ void LobbyStage::OnGlobalAction(GlobalActionIDs actionId, void* actionParam)
             // add button and labels for every character in list
             for (CharacterListRecord* rec : chars)
             {
-                bw = ButtonWidget::Create(20, currPos, FONT_MAIN, " ");
+                bw = ButtonWidget::Create(20, currPos, FONT_MAIN, L" ");
                 bw->SetDimensions(300, 60);
                 bw->SetID(ELEMENT_CHARACTER_BUTTON_START + i);
                 sDrawing->AddUIWidget(bw);
@@ -98,7 +98,7 @@ void LobbyStage::OnGlobalAction(GlobalActionIDs actionId, void* actionParam)
                 lw = LabelWidget::Create(40, currPos + 13, FONT_MAIN, rec->name.c_str());
                 lw->SetInteractive(false);
                 sDrawing->AddUIWidget(lw);
-                lw = LabelWidget::Create(40, currPos + 35, FONT_SMALLER, (std::string("Level ") + std::to_string(rec->level)).c_str());
+                lw = LabelWidget::Create(40, currPos + 35, FONT_SMALLER, (std::wstring(L"Level ") + std::to_wstring(rec->level)).c_str());
                 lw->SetInteractive(false);
                 sDrawing->AddUIWidget(lw);
 

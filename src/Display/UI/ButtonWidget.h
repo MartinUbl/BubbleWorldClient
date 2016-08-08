@@ -49,7 +49,7 @@ class ButtonWidget : public UIWidget
 {
     public:
         // static factory method for creating Button widget
-        static ButtonWidget* Create(int32_t x, int32_t y, AppFonts fontId, const char* text, SDL_Color bgColor = defaultButtonBackColor, SDL_Color textColor = defaultTextColor);
+        static ButtonWidget* Create(int32_t x, int32_t y, AppFonts fontId, const wchar_t* text, SDL_Color bgColor = defaultButtonBackColor, SDL_Color textColor = defaultTextColor);
 
         // updates cached canvas after changes made
         void UpdateCanvas();
@@ -62,7 +62,7 @@ class ButtonWidget : public UIWidget
         void SetClickFunction(std::function<void(void)> fnc);
 
         // sets foreground text
-        void SetText(const char* text);
+        void SetText(const wchar_t* text);
         // sets foreground text color
         void SetTextColor(uint8_t r, uint8_t g, uint8_t b);
         // sets background color
@@ -84,7 +84,7 @@ class ButtonWidget : public UIWidget
 
     private:
         // foreground text
-        std::string m_text;
+        std::wstring m_text;
         // text color used
         SDL_Color m_textColor;
         // background color used (normal state)

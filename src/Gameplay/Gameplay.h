@@ -36,7 +36,7 @@ struct CharacterListRecord
     // character guid (used in world enter packet)
     uint32_t guid;
     // character name
-    std::string name;
+    std::wstring name;
     // character level
     uint16_t level;
 
@@ -98,7 +98,7 @@ class Gameplay
         // send name query packet for requesting name of object
         void SendNameQuery(uint64_t guid);
         // sends chat message
-        void SendChat(TalkType type, const char* str);
+        void SendChat(TalkType type, const wchar_t* str);
         // sends interaction request
         void SendInteractionRequest(WorldObject* object);
 
@@ -111,7 +111,7 @@ class Gameplay
         // signals gameplay class about map resolve event (also verified)
         void SignalMapLoaded(uint32_t mapId);
         // signals gameplay class about name resolve event
-        void SignalNameQueryResolved(uint64_t guid, const char* name);
+        void SignalNameQueryResolved(uint64_t guid, const wchar_t* name);
 
         // clears character list (lobby)
         void ClearCharacterList();
@@ -136,7 +136,7 @@ class Gameplay
         WorldObject* GetForeignObject(uint64_t guid);
 
         // adds chat message to history
-        void AddChatMessage(TalkType type, const char* author, const char* message);
+        void AddChatMessage(TalkType type, const wchar_t* author, const wchar_t* message);
         // retrieves chat message history
         std::list<ChatMessageRecord> const& GetChatMessages();
 
@@ -174,7 +174,7 @@ class Gameplay
         // map of guid+timestamp of name retrieval attempts
         std::unordered_map<uint64_t, time_t> m_nameQuerySent;
         // cached names of objects
-        std::unordered_map<uint64_t, std::string> m_cachedNames;
+        std::unordered_map<uint64_t, std::wstring> m_cachedNames;
         // current mouseover object
         WorldObject* m_hoverObject;
 };

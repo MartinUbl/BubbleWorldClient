@@ -29,13 +29,13 @@ class LabelWidget : public UIWidget
 {
     public:
         // static factory method for creating label widget
-        static LabelWidget* Create(int32_t x, int32_t y, AppFonts fontId, const char* text, SDL_Color textColor = defaultTextColor);
+        static LabelWidget* Create(int32_t x, int32_t y, AppFonts fontId, const wchar_t* text, SDL_Color textColor = defaultTextColor);
 
         // updates canvas for drawing
         void UpdateCanvas();
 
         // sets foreground text
-        void SetText(const char* text);
+        void SetText(const wchar_t* text);
         // sets foreground text color
         void SetTextColor(uint8_t r, uint8_t g, uint8_t b);
         // sets font used
@@ -47,7 +47,7 @@ class LabelWidget : public UIWidget
 
     private:
         // text drawn
-        std::string m_text;
+        std::wstring m_text;
         // text color used
         SDL_Color m_textColor;
         // font used
