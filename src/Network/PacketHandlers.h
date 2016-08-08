@@ -120,6 +120,7 @@ static PacketHandlerStructure PacketHandlerTable[] = {
     { &PacketHandlers::HandleMoveHeartbeat,     STATE_RESTRICTION_GAME  },      // SP_MOVE_HEARTBEAT
     { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_CHAT_MESSAGE
     { &PacketHandlers::HandleChatMessage,       STATE_RESTRICTION_GAME },       // SP_CHAT_MESSAGE
+    { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_INTERACTION_REQUEST
 };
 
 #endif

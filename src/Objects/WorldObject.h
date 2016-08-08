@@ -48,7 +48,7 @@ struct Position
     friend Position operator-(const Position &posA, const Position &posB) { return Position(posA.x - posB.x, posA.y - posB.y); }
 
     // calculates distance between two positions
-    float GetDistance(Position &pos)
+    float GetDistance(const Position &pos) const
     {
         return sqrt((pos.x - x)*(pos.x - x) + (pos.y - y)*(pos.y - y));
     }

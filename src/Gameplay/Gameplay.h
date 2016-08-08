@@ -99,6 +99,8 @@ class Gameplay
         void SendNameQuery(uint64_t guid);
         // sends chat message
         void SendChat(TalkType type, const char* str);
+        // sends interaction request
+        void SendInteractionRequest(WorldObject* object);
 
         // creates local player on map
         void CreatePlayer(uint32_t mapId, float posX, float posY);

@@ -45,6 +45,12 @@ void GameStage::OnDraw()
     //
 }
 
+void GameStage::OnMouseClick(bool left, bool press)
+{
+    if (left && !press && sGameplay->GetHoverObject())
+        sGameplay->SendInteractionRequest(sGameplay->GetHoverObject());
+}
+
 void GameStage::OnKeyPress(int key, bool press)
 {
     switch (key)

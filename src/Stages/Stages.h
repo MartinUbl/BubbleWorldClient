@@ -139,6 +139,7 @@ class GameStage : public StageTemplate
         void OnEnter();
         void OnLeave();
         void OnDraw();
+        void OnMouseClick(bool left, bool press);
         void OnKeyPress(int key, bool press);
         void OnUIAction(uint32_t elementId, UIActionType actionId);
         void OnGlobalAction(GlobalActionIDs actionId, void* actionParam);

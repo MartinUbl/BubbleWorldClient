@@ -282,6 +282,17 @@ void Gameplay::SendChat(TalkType type, const char* str)
     sNetwork->SendPacket(pkt);
 }
 
+void Gameplay::SendInteractionRequest(WorldObject* object)
+{
+    // TODO: real distance check, that considers object images
+    if (!object || !m_player || object->GetPosition().GetDistance(m_player->GetPosition()) > 1.0f)
+        return;
+
+    SmartPacket pkt(CP_INTERACTION_REQUEST);
+    pkt.WriteUInt64(object->GetGUID());
+    sNetwork->SendPacket(pkt);
+}
+
 void Gameplay::RequestSorroundingChunks(bool force)
 {
     // retrieve current chunks

@@ -122,7 +122,7 @@ int Application::Run()
                             m_stage->OnMouseClick(true, true);
                         // right button
                         else if (ev.button.button == 2)
-                            m_stage->OnMouseClick(true, false);
+                            m_stage->OnMouseClick(false, true);
                     }
                     sDrawing->OnMouseClick(ev.button.button == 1, true);
                     break;
@@ -132,7 +132,7 @@ int Application::Run()
                     {
                         // left button
                         if (ev.button.button == 1)
-                            m_stage->OnMouseClick(false, true);
+                            m_stage->OnMouseClick(true, false);
                         // right button
                         else if (ev.button.button == 2)
                             m_stage->OnMouseClick(false, false);
