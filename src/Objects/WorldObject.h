@@ -85,6 +85,8 @@ class WorldObject
         const wchar_t* GetName();
         // retrieves prerendered name texture
         SDL_Texture* GetNameTexture();
+        // retrieves minimum distance between two collision boxes
+        float GetMinimumBoxDistance(WorldObject* other);
 
         // sets position using Position container
         void SetPosition(Position pos);

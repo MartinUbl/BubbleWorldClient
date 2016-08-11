@@ -28,6 +28,9 @@ class Player;
 struct MapHeader;
 enum MoveDirectionElement;
 
+// the maximum distance for player/object interaction
+#define INTERACTION_DISTANCE_ABSOLUTE 1.25f
+
 /*
  * Structure for character list record
  */

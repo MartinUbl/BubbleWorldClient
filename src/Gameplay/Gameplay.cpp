@@ -287,8 +287,7 @@ void Gameplay::SendChat(TalkType type, const wchar_t* str)
 
 void Gameplay::SendInteractionRequest(WorldObject* object)
 {
-    // TODO: real distance check, that considers object images
-    if (!object || !m_player || object->GetPosition().GetDistance(m_player->GetPosition()) > 1.0f)
+    if (!object || !m_player || object->GetMinimumBoxDistance(m_player) > INTERACTION_DISTANCE_ABSOLUTE)
         return;
 
     SmartPacket pkt(CP_INTERACTION_REQUEST);
