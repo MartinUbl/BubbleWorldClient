@@ -170,6 +170,7 @@
     <ClCompile Include="..\src\Network\PacketHandlers.cpp" />
     <ClCompile Include="..\src\Network\SmartPacket.cpp" />
     <ClCompile Include="..\src\Objects\Creature.cpp" />
+    <ClCompile Include="..\src\Objects\Gameobject.cpp" />
     <ClCompile Include="..\src\Objects\Player.cpp" />
     <ClCompile Include="..\src\Objects\Unit.cpp" />
     <ClCompile Include="..\src\Objects\WorldObject.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="..\src\Network\SmartPacket.h" />
     <ClInclude Include="..\src\Objects\AnimEnums.h" />
     <ClInclude Include="..\src\Objects\Creature.h" />
+    <ClInclude Include="..\src\Objects\Gameobject.h" />
     <ClInclude Include="..\src\Objects\ObjectEnums.h" />
     <ClInclude Include="..\src\Objects\Player.h" />
     <ClInclude Include="..\src\Objects\Unit.h" />

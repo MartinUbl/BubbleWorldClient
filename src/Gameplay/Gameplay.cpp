@@ -26,6 +26,7 @@
 #include "MapStorage.h"
 #include "Log.h"
 #include "Creature.h"
+#include "Gameobject.h"
 #include "Player.h"
 #include "Drawing.h"
 #include "Colors.h"
@@ -403,9 +404,9 @@ WorldObject* Gameplay::CreateForeignObject(uint64_t guid)
         case OTYPE_CREATURE:
             obj = new Creature();
             break;
-        //case OTYPE_GAMEOBJECT:
-        //    obj = new GameObject();
-        //    break;
+        case OTYPE_GAMEOBJECT:
+            obj = new Gameobject();
+            break;
         default:
             sLog->Error("Could not create object type %u (guidlow: %u)", type, EXTRACT_GUIDLOW(guid));
             break;

@@ -68,9 +68,16 @@ static uint32_t crc32_tab[] = {
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
+struct ChecksumLocaleOverride : std::numpunct<char>
+{
+    char do_thousands_sep() const { return ' '; }
+    std::string do_grouping() const { return "\0"; }
+};
+
 std::string GetCRC32String(uint32_t crc)
 {
     std::stringstream stream;
+    stream.imbue(std::locale(std::locale(), new ChecksumLocaleOverride()));
     stream << std::hex << std::setfill('0') << std::setw(8) << crc;
 
     return stream.str().c_str();

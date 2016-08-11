@@ -77,10 +77,7 @@ void ResourceStreamManager::FinishResourceStream(ResourceType type, uint32_t id)
     // calculate CRC32 checksum of resource file
     uint32_t crc = CRC32_File(f);
 
-    std::stringstream stream;
-    stream << std::hex << std::setfill('0') << std::setw(8) << crc;
-
-    rs->checksumStr = stream.str().c_str();
+    rs->checksumStr = GetCRC32String(crc).c_str();
 
     // finally insert resource record to local file storage
     switch (type)

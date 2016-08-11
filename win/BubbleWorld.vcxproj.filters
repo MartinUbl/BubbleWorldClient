@@ -145,6 +145,9 @@
     <ClCompile Include="..\src\Display\MouseCursor.cpp">
       <Filter>src\Display</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Objects\Gameobject.cpp">
+      <Filter>src\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\General\Application.h">
@@ -281,6 +284,9 @@
     </ClInclude>
     <ClInclude Include="..\src\Display\MouseCursor.h">
       <Filter>src\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Objects\Gameobject.h">
+      <Filter>src\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

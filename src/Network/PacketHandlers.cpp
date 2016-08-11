@@ -217,17 +217,17 @@ void PacketHandlers::HandleCreateObject(SmartPacket& packet)
             // apply updatefields
             obj->ApplyValueSet((uint8_t*)tmpFields, fieldCount * sizeof(uint32_t));
 
+            // read position
+            float x = packet.ReadFloat();
+            float y = packet.ReadFloat();
+            // set position
+            obj->SetPosition(x, y);
+
             // if it's creature or player
             if (obj->GetType() == OTYPE_CREATURE || obj->GetType() == OTYPE_PLAYER)
             {
-                // read position
-                float x = packet.ReadFloat();
-                float y = packet.ReadFloat();
                 // read movement info
                 uint8_t moveMask = packet.ReadUInt8();
-
-                // set position
-                obj->SetPosition(x, y);
                 // apply movement info
                 for (uint8_t i = 0; i <= 3; i++)
                     if (((1 << i) & moveMask) != 0)
@@ -345,19 +345,16 @@ void PacketHandlers::HandleMapMetadata(SmartPacket& packet)
     // get header CRC32 checksum
     uint32_t crc = CRC32_Bytes((uint8_t*)&mh, sizeof(MapHeader));
 
-    std::stringstream stream;
-    stream.str(std::string());
-    stream.clear();
-    stream << std::hex << std::setfill('0') << std::setw(8) << crc;
+    std::string checksum = GetCRC32String(crc);
 
     // insert to local storage
-    sMapStorage->InsertMapRecord(mh.mapId, filename.c_str(), stream.str().c_str(), (uint32_t)time(nullptr));
+    sMapStorage->InsertMapRecord(mh.mapId, filename.c_str(), checksum.c_str(), (uint32_t)time(nullptr));
 
     // create map in gameplay class
     sGameplay->CreateMapUsing(mh);
 
     // verify checksum
-    sGameplay->SendRequestMapMetadataChecksumVerify(mh.mapId, stream.str().c_str());
+    sGameplay->SendRequestMapMetadataChecksumVerify(mh.mapId, checksum.c_str());
 }
 
 void PacketHandlers::HandleMapChunk(SmartPacket& packet)
@@ -408,19 +405,16 @@ void PacketHandlers::HandleMapChunk(SmartPacket& packet)
     // finalize CRC calculation
     crc = CRC32_Bytes_ContinuousFinalize(crc);
 
-    std::stringstream stream;
-    stream.str(std::string());
-    stream.clear();
-    stream << std::hex << std::setfill('0') << std::setw(8) << crc;
+    std::string checksum = GetCRC32String(crc);
 
     // store to local file storage
-    sMapStorage->InsertMapChunkRecord(mapId, startX, startY, sizeX, sizeY, stream.str().c_str(), (uint32_t)time(nullptr));
+    sMapStorage->InsertMapChunkRecord(mapId, startX, startY, sizeX, sizeY, checksum.c_str(), (uint32_t)time(nullptr));
 
     // save map to file to store changes
     map->SaveToFile();
 
     // send checksum verify packet
-    sGameplay->SendRequestMapChunkChecksumVerify(mapId, startX, startY, stream.str().c_str());
+    sGameplay->SendRequestMapChunkChecksumVerify(mapId, startX, startY, checksum.c_str());
 }
 
 void PacketHandlers::HandleMapMetaChecksumVerify(SmartPacket& packet)
@@ -507,16 +501,13 @@ void PacketHandlers::HandleImageMetadata(SmartPacket& packet)
     // finalize CRC32 calculation
     crc = CRC32_Bytes_ContinuousFinalize(crc);
 
-    std::stringstream stream;
-    stream.str(std::string());
-    stream.clear();
-    stream << std::hex << std::setfill('0') << std::setw(8) << crc;
+    std::string checksum = GetCRC32String(crc);
 
     // insert metadata parent record to local file database
-    sImageStorage->InsertImageMetadataRecord(id, sizeX, sizeY, baseCenterX, baseCenterY, stream.str().c_str(), (uint32_t)time(nullptr));
+    sImageStorage->InsertImageMetadataRecord(id, sizeX, sizeY, baseCenterX, baseCenterY, checksum.c_str(), (uint32_t)time(nullptr));
 
     // send metadata checksum verify packet
-    sResourceStreamManager->SendVerifyMetadataChecksumPacket(RSTYPE_IMAGE, id, stream.str().c_str());
+    sResourceStreamManager->SendVerifyMetadataChecksumPacket(RSTYPE_IMAGE, id, checksum.c_str());
 }
 
 void PacketHandlers::HandleImageMetaChecksumVerify(SmartPacket& packet)
