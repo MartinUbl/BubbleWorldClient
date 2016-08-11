@@ -23,6 +23,9 @@
 #include "Drawing.h"
 #include "Colors.h"
 #include "Map.h"
+#include "ImageStorage.h"
+#include "StorageManager.h"
+#include "Log.h"
 
 Unit::Unit(ObjectType type) : WorldObject(type), m_moveVector(0.0f, 0.0f)
 {
@@ -45,6 +48,13 @@ void Unit::Update()
         uint32_t moveDiff = getMSTimeDiff(m_lastMovementUpdate, getMSTime());
         if (moveDiff >= 1)
         {
+            ImageMetadataDatabaseRecord *meta, *objmeta;
+            // get object vector
+            ObjectVector const& objVector = GetMap()->GetObjectVisibilityVector();
+
+            // retrieve own metadata
+            meta = sImageStorage->GetImageMetadataRecord(GetUInt32Value(OBJECT_FIELD_IMAGEID));
+
             // the vector is reduced to unit size, coefficient is "number of milliseconds passed"
             float coef = (float)moveDiff;
             // store old position
@@ -61,6 +71,32 @@ void Unit::Update()
             MapField* mf = GetMap()->GetField((uint32_t)newX, (uint32_t)m_position.y);
             if (!mf || !CanMoveOn((MapFieldType)mf->type, mf->flags))
                 newX = m_position.x;
+            // secure collision with other objects
+            if (meta)
+            {
+                for (uint32_t i = 0; i < objVector.size(); i++)
+                {
+                    // we detect collision only with gameobjects
+                    if (objVector[i]->GetType() != OTYPE_GAMEOBJECT)
+                        continue;
+
+                    // if there's metadata present, and the collision box exists
+                    objmeta = sImageStorage->GetImageMetadataRecord(objVector[i]->GetUInt32Value(OBJECT_FIELD_IMAGEID));
+                    if (!objmeta || (objmeta->collisionX1 == objmeta->collisionX2 && objmeta->collisionY1 == objmeta->collisionY2))
+                        continue;
+
+                    // detect collision
+                    if (meta->unitCollisionX1 + newX - meta->unitBaseX < objmeta->unitCollisionX2 + objVector[i]->GetPositionX() - objmeta->unitBaseX &&
+                        meta->unitCollisionY1 + GetPositionY() - meta->unitBaseY < objmeta->unitCollisionY2 + objVector[i]->GetPositionY() - objmeta->unitBaseY &&
+                        meta->unitCollisionX2 + newX - meta->unitBaseX > objmeta->unitCollisionX1 + objVector[i]->GetPositionX() - objmeta->unitBaseX &&
+                        meta->unitCollisionY2 + GetPositionY() - meta->unitBaseY > objmeta->unitCollisionY1 + objVector[i]->GetPositionY() - objmeta->unitBaseY
+                        )
+                    {
+                        newX = m_position.x;
+                        break;
+                    }
+                }
+            }
 
             SetPositionX(newX);
 
@@ -74,6 +110,32 @@ void Unit::Update()
             mf = GetMap()->GetField((uint32_t)m_position.x, (uint32_t)newY);
             if (!mf || !CanMoveOn((MapFieldType)mf->type, mf->flags))
                 newY = m_position.y;
+            // secure collision with other objects
+            if (meta)
+            {
+                for (uint32_t i = 0; i < objVector.size(); i++)
+                {
+                    // we detect collision only with gameobjects
+                    if (objVector[i]->GetType() != OTYPE_GAMEOBJECT)
+                        continue;
+
+                    // if there's metadata present, and the collision box exists
+                    objmeta = sImageStorage->GetImageMetadataRecord(objVector[i]->GetUInt32Value(OBJECT_FIELD_IMAGEID));
+                    if (!objmeta || (objmeta->collisionX1 == objmeta->collisionX2 && objmeta->collisionY1 == objmeta->collisionY2))
+                        continue;
+
+                    // detect collision
+                    if (meta->unitCollisionX1 + GetPositionX() - meta->unitBaseX < objmeta->unitCollisionX2 + objVector[i]->GetPositionX() - objmeta->unitBaseX &&
+                        meta->unitCollisionY1 + newY - meta->unitBaseY < objmeta->unitCollisionY2 + objVector[i]->GetPositionY() - objmeta->unitBaseY &&
+                        meta->unitCollisionX2 + GetPositionX() - meta->unitBaseX > objmeta->unitCollisionX1 + objVector[i]->GetPositionX() - objmeta->unitBaseX &&
+                        meta->unitCollisionY2 + newY - meta->unitBaseY > objmeta->unitCollisionY1 + objVector[i]->GetPositionY() - objmeta->unitBaseY
+                        )
+                    {
+                        newY = m_position.y;
+                        break;
+                    }
+                }
+            }
 
             SetPositionY(newY);
 

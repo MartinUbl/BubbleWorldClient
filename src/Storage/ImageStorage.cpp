@@ -93,6 +93,9 @@ void ImageStorage::Load()
             m_imageMetadata[id].collisionY2 = qr->getuval();
             m_imageMetadata[id].checksum = qr->getstr();
             m_imageMetadata[id].addedTimestamp = qr->getuval();
+
+            m_imageMetadata[id].CalculateUnitCollisionBox();
+
             count++;
         }
     }
@@ -164,6 +167,8 @@ void ImageStorage::InsertImageMetadataRecord(uint32_t id, uint32_t sizeX, uint32
     m_imageMetadata[id].collisionY2 = collisionY2;
     m_imageMetadata[id].checksum = checksumStr;
     m_imageMetadata[id].addedTimestamp = addedTimestamp;
+
+    m_imageMetadata[id].CalculateUnitCollisionBox();
 }
 
 ImageMetadataDatabaseRecord* ImageStorage::GetImageMetadataRecord(uint32_t id)
