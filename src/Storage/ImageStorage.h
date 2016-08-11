@@ -75,6 +75,14 @@ struct ImageMetadataDatabaseRecord
     uint32_t baseCenterX;
     // center image to this point (Y coordinate)
     uint32_t baseCenterY;
+    // upper-left corner of collision box (X coordinate)
+    uint32_t collisionX1;
+    // upper-left corner of collision box (Y coordinate)
+    uint32_t collisionY1;
+    // bottom-right corner of collision box (X coordinate)
+    uint32_t collisionX2;
+    // bottom-right corner of collision box (Y coordinate)
+    uint32_t collisionY2;
     // checksum
     std::string checksum;
     // timestamp of record creation
@@ -103,7 +111,7 @@ class ImageStorage : public FileStorage
         // retrieves image record
         ImageDatabaseRecord* GetImageRecord(uint32_t id);
         // inserts image metadata record
-        void InsertImageMetadataRecord(uint32_t id, uint32_t sizeX, uint32_t sizeY, uint32_t baseCenterX, uint32_t baseCenterY, const char* checksumStr, uint32_t addedTimestamp);
+        void InsertImageMetadataRecord(uint32_t id, uint32_t sizeX, uint32_t sizeY, uint32_t baseCenterX, uint32_t baseCenterY, uint32_t collisionX1, uint32_t collisionY1, uint32_t collisionX2, uint32_t collisionY2, const char* checksumStr, uint32_t addedTimestamp);
         // retrieves image metadata record
         ImageMetadataDatabaseRecord* GetImageMetadataRecord(uint32_t id);
         // inserts image animation record

@@ -445,7 +445,7 @@ void PacketHandlers::HandleMapChunkChecksumVerify(SmartPacket& packet)
 
 void PacketHandlers::HandleImageMetadata(SmartPacket& packet)
 {
-    uint32_t id, sizeX, sizeY, baseCenterX, baseCenterY, animCount;
+    uint32_t id, sizeX, sizeY, baseCenterX, baseCenterY, collisionX1, collisionY1, collisionX2, collisionY2, animCount;
     uint32_t animId, frameBegin, frameEnd, frameDelay;
 
     uint8_t status = packet.ReadUInt8();
@@ -465,6 +465,10 @@ void PacketHandlers::HandleImageMetadata(SmartPacket& packet)
     sizeY = packet.ReadUInt32();
     baseCenterX = packet.ReadUInt32();
     baseCenterY = packet.ReadUInt32();
+    collisionX1 = packet.ReadUInt32();
+    collisionY1 = packet.ReadUInt32();
+    collisionX2 = packet.ReadUInt32();
+    collisionY2 = packet.ReadUInt32();
 
     // perform checksum on metadata
     crc = CRC32_Bytes_Continuous((uint8_t*)&id, sizeof(uint32_t), crc);
@@ -472,6 +476,10 @@ void PacketHandlers::HandleImageMetadata(SmartPacket& packet)
     crc = CRC32_Bytes_Continuous((uint8_t*)&sizeY, sizeof(uint32_t), crc);
     crc = CRC32_Bytes_Continuous((uint8_t*)&baseCenterX, sizeof(uint32_t), crc);
     crc = CRC32_Bytes_Continuous((uint8_t*)&baseCenterY, sizeof(uint32_t), crc);
+    crc = CRC32_Bytes_Continuous((uint8_t*)&collisionX1, sizeof(uint32_t), crc);
+    crc = CRC32_Bytes_Continuous((uint8_t*)&collisionY1, sizeof(uint32_t), crc);
+    crc = CRC32_Bytes_Continuous((uint8_t*)&collisionX2, sizeof(uint32_t), crc);
+    crc = CRC32_Bytes_Continuous((uint8_t*)&collisionY2, sizeof(uint32_t), crc);
 
     // wipe existing metadata
     sImageStorage->WipeImageMetadata(id);
@@ -504,7 +512,7 @@ void PacketHandlers::HandleImageMetadata(SmartPacket& packet)
     std::string checksum = GetCRC32String(crc);
 
     // insert metadata parent record to local file database
-    sImageStorage->InsertImageMetadataRecord(id, sizeX, sizeY, baseCenterX, baseCenterY, checksum.c_str(), (uint32_t)time(nullptr));
+    sImageStorage->InsertImageMetadataRecord(id, sizeX, sizeY, baseCenterX, baseCenterY, collisionX1, collisionY1, collisionX2, collisionY2, checksum.c_str(), (uint32_t)time(nullptr));
 
     // send metadata checksum verify packet
     sResourceStreamManager->SendVerifyMetadataChecksumPacket(RSTYPE_IMAGE, id, checksum.c_str());

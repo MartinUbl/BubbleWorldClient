@@ -38,7 +38,8 @@ void ImageStorage::CreateTablesIfNotExist()
     // create base images table
     DBExecute("CREATE TABLE IF NOT EXISTS images (id INTEGER, filename TEXT, checksum TEXT, added_time INTEGER);");
     // create image metadata table
-    DBExecute("CREATE TABLE IF NOT EXISTS image_metadata (id INTEGER, size_x INTEGER, size_y INTEGER, base_center_x INTEGER, base_center_y INTEGER, checksum TEXT, added_time INTEGER);");
+    DBExecute("CREATE TABLE IF NOT EXISTS image_metadata (id INTEGER, size_x INTEGER, size_y INTEGER, base_center_x INTEGER, base_center_y INTEGER,\
+        collision_x1 INTEGER, collision_y1 INTEGER, collision_x2 INTEGER, collision_y2 INTEGER, checksum TEXT, added_time INTEGER);");
     // create image animation metadata table
     DBExecute("CREATE TABLE IF NOT EXISTS image_anims (id INTEGER, anim_id INTEGER, frame_begin INTEGER, frame_end INTEGER, frame_delay INTEGER, added_time INTEGER);");
 }
@@ -86,6 +87,10 @@ void ImageStorage::Load()
             m_imageMetadata[id].sizeY = qr->getuval();
             m_imageMetadata[id].baseCenterX = qr->getuval();
             m_imageMetadata[id].baseCenterY = qr->getuval();
+            m_imageMetadata[id].collisionX1 = qr->getuval();
+            m_imageMetadata[id].collisionY1 = qr->getuval();
+            m_imageMetadata[id].collisionX2 = qr->getuval();
+            m_imageMetadata[id].collisionY2 = qr->getuval();
             m_imageMetadata[id].checksum = qr->getstr();
             m_imageMetadata[id].addedTimestamp = qr->getuval();
             count++;
@@ -142,16 +147,21 @@ ImageDatabaseRecord* ImageStorage::GetImageRecord(uint32_t id)
     return &m_imageRecords[id];
 }
 
-void ImageStorage::InsertImageMetadataRecord(uint32_t id, uint32_t sizeX, uint32_t sizeY, uint32_t baseCenterX, uint32_t baseCenterY, const char* checksumStr, uint32_t addedTimestamp)
+void ImageStorage::InsertImageMetadataRecord(uint32_t id, uint32_t sizeX, uint32_t sizeY, uint32_t baseCenterX, uint32_t baseCenterY, uint32_t collisionX1, uint32_t collisionY1, uint32_t collisionX2, uint32_t collisionY2, const char* checksumStr, uint32_t addedTimestamp)
 {
     DBExecute("DELETE FROM image_metadata WHERE id = %u", id);
-    DBExecute("INSERT INTO image_metadata (id, size_x, size_y, base_center_x, base_center_y, checksum, added_time) VALUES (%u, %u, %u, %u, %u, '%s', %u);", id, sizeX, sizeY, baseCenterX, baseCenterY, checksumStr, addedTimestamp);
+    DBExecute("INSERT INTO image_metadata (id, size_x, size_y, base_center_x, base_center_y, collision_x1, collision_y1, collision_x2, collision_y2, checksum, added_time) VALUES (%u, %u, %u, %u, %u, %u, %u, %u, %u, '%s', %u);",
+        id, sizeX, sizeY, baseCenterX, baseCenterY, collisionX1, collisionY1, collisionX2, collisionY2, checksumStr, addedTimestamp);
 
     m_imageMetadata[id].id = id;
     m_imageMetadata[id].sizeX = sizeX;
     m_imageMetadata[id].sizeY = sizeY;
     m_imageMetadata[id].baseCenterX = baseCenterX;
     m_imageMetadata[id].baseCenterY = baseCenterY;
+    m_imageMetadata[id].collisionX1 = collisionX1;
+    m_imageMetadata[id].collisionY1 = collisionY1;
+    m_imageMetadata[id].collisionX2 = collisionX2;
+    m_imageMetadata[id].collisionY2 = collisionY2;
     m_imageMetadata[id].checksum = checksumStr;
     m_imageMetadata[id].addedTimestamp = addedTimestamp;
 }
