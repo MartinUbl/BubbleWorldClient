@@ -77,6 +77,8 @@ namespace PacketHandlers
     PACKET_HANDLER(HandleMoveStopDir);
     PACKET_HANDLER(HandleMoveHeartbeat);
     PACKET_HANDLER(HandleChatMessage);
+    PACKET_HANDLER(HandleDialogueData);
+    PACKET_HANDLER(HandleDialogueClose);
 };
 
 // table of packet handlers; the opcode is also an index here
@@ -121,6 +123,9 @@ static PacketHandlerStructure PacketHandlerTable[] = {
     { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_CHAT_MESSAGE
     { &PacketHandlers::HandleChatMessage,       STATE_RESTRICTION_GAME },       // SP_CHAT_MESSAGE
     { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_INTERACTION_REQUEST
+    { &PacketHandlers::HandleDialogueData,      STATE_RESTRICTION_GAME  },      // SP_DIALOGUE_DATA
+    { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_DIALOGUE_DECISION
+    { &PacketHandlers::HandleDialogueClose,     STATE_RESTRICTION_GAME  },      // SP_DIALOGUE_CLOSE
 };
 
 #endif

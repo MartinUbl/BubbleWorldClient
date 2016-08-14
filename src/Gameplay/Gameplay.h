@@ -25,6 +25,7 @@
 class WorldObject;
 class Map;
 class Player;
+class DialogueWidget;
 struct MapHeader;
 enum MoveDirectionElement;
 
@@ -150,6 +151,15 @@ class Gameplay
         // checks if the mouse changes hover object
         void CheckHoverObject();
 
+        // starts or resets dialogue with NPC
+        void StartOrResetDialogue(uint64_t sourceGuid, const wchar_t* headerText);
+        // adds dialogue decision to current dialogue widget
+        void AddDialogueDecision(uint32_t id, const wchar_t* text);
+        // ends dialogue, clears widget
+        void EndDialogue();
+        // when dialogue button signals gameplay class about decision made (button clicked)
+        void SignalDialogueDecision(uint32_t id);
+
     protected:
         // protected singleton constructor
         Gameplay();
@@ -180,6 +190,10 @@ class Gameplay
         std::unordered_map<uint64_t, std::wstring> m_cachedNames;
         // current mouseover object
         WorldObject* m_hoverObject;
+        // current dialogue widget
+        DialogueWidget* m_dialogueWidget;
+        // current dialogue source object GUID
+        uint64_t m_dialogueSourceGUID;
 };
 
 #define sGameplay Singleton<Gameplay>::getInstance()

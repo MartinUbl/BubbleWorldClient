@@ -62,14 +62,28 @@ inline bool custom_createDirectory(const char* path)
 
 inline std::wstring UTF8ToWString(const std::string& str)
 {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
-    return myconv.from_bytes(str);
+    try
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+        return myconv.from_bytes(str);
+    }
+    catch (std::exception &)
+    {
+        return std::wstring(str.begin(), str.end());
+    }
 }
 
 inline std::string WStringToUTF8(const std::wstring& str)
 {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
-    return myconv.to_bytes(str);
+    try
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+        return myconv.to_bytes(str);
+    }
+    catch (std::exception &)
+    {
+        return std::string(str.begin(), str.end());
+    }
 }
 
 #endif

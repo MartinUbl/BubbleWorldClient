@@ -153,6 +153,7 @@
     <ClCompile Include="..\dep\SQLite\sqlite3.c" />
     <ClCompile Include="..\src\Display\Drawing.cpp" />
     <ClCompile Include="..\src\Display\UI\ButtonWidget.cpp" />
+    <ClCompile Include="..\src\Display\UI\DialogueWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\LabelWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\SplashMessageWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\TextFieldWidget.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="..\src\Display\Colors.h" />
     <ClInclude Include="..\src\Display\Drawing.h" />
     <ClInclude Include="..\src\Display\UI\ButtonWidget.h" />
+    <ClInclude Include="..\src\Display\UI\DialogueWidget.h" />
     <ClInclude Include="..\src\Display\UI\LabelWidget.h" />
     <ClInclude Include="..\src\Display\UI\SplashMessageWidget.h" />
     <ClInclude Include="..\src\Display\UI\TextFieldWidget.h" />

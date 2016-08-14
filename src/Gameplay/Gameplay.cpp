@@ -30,12 +30,15 @@
 #include "Player.h"
 #include "Drawing.h"
 #include "Colors.h"
+#include "UI\DialogueWidget.h"
 
 #include "WorldObject.h"
 
 Gameplay::Gameplay()
 {
     m_hoverObject = nullptr;
+    m_dialogueWidget = nullptr;
+    m_dialogueSourceGUID = 0;
 }
 
 void Gameplay::ConnectToServer()
@@ -549,4 +552,50 @@ void Gameplay::CheckHoverObject()
     }
 
     SetHoverObject(hoverObj);
+}
+
+void Gameplay::StartOrResetDialogue(uint64_t sourceGuid, const wchar_t* headerText)
+{
+    // if no dialogue widget present, create one
+    if (!m_dialogueWidget)
+        m_dialogueWidget = DialogueWidget::Create(headerText);
+    else // otherwise reuse old
+        m_dialogueWidget->ClearDecisions();
+
+    // set text and store source guid
+    m_dialogueWidget->SetText(headerText);
+    m_dialogueSourceGUID = sourceGuid;
+}
+
+void Gameplay::AddDialogueDecision(uint32_t id, const wchar_t* text)
+{
+    if (m_dialogueWidget)
+        m_dialogueWidget->AddDecision(id, text);
+}
+
+void Gameplay::EndDialogue()
+{
+    if (m_dialogueWidget)
+    {
+        // clear decisions - this will also delete decision buttons
+        m_dialogueWidget->ClearDecisions();
+        // remove widget from listing
+        sDrawing->RemoveUIWidget(m_dialogueWidget);
+
+        // cleanup
+        delete m_dialogueWidget;
+        m_dialogueWidget = nullptr;
+        m_dialogueSourceGUID = 0;
+    }
+}
+
+void Gameplay::SignalDialogueDecision(uint32_t id)
+{
+    if (m_dialogueSourceGUID == 0 || !m_dialogueWidget)
+        return;
+
+    SmartPacket pkt(CP_DIALOGUE_DECISION);
+    pkt.WriteUInt64(m_dialogueSourceGUID);
+    pkt.WriteUInt32(id);
+    sNetwork->SendPacket(pkt);
 }

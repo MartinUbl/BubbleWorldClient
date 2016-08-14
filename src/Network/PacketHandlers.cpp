@@ -625,3 +625,46 @@ void PacketHandlers::HandleChatMessage(SmartPacket& packet)
         sGameplay->AddChatMessage((TalkType)type, nullptr, wmsg.c_str());
     }
 }
+
+void PacketHandlers::HandleDialogueData(SmartPacket& packet)
+{
+    uint64_t sourceGuid = packet.ReadUInt64();
+    uint8_t dialogueState = packet.ReadUInt8();
+
+    // "wait" means the server will signal us when something new happens
+    if (dialogueState == DIALOGUE_WAIT)
+    {
+        sGameplay->StartOrResetDialogue(sourceGuid, L"Probíhá rozhovor...");
+    }
+    // "decide" means we have to choose an alternative
+    else if (dialogueState == DIALOGUE_DECIDE)
+    {
+        std::string headerText = packet.ReadString();
+        std::wstring wmsg = UTF8ToWString(headerText);
+
+        // this will start a new dialogue or reuse old one
+        sGameplay->StartOrResetDialogue(sourceGuid, wmsg.c_str());
+
+        uint32_t id;
+        std::string decString;
+
+        // read all received decisions
+        uint8_t count = packet.ReadUInt8();
+        for (uint8_t i = 0; i < count; i++)
+        {
+            id = packet.ReadUInt32();
+            decString = packet.ReadString();
+            wmsg = UTF8ToWString(decString);
+
+            // and put them to dialogue
+            sGameplay->AddDialogueDecision(id, wmsg.c_str());
+        }
+    }
+}
+
+void PacketHandlers::HandleDialogueClose(SmartPacket& packet)
+{
+    // just end dialogue
+
+    sGameplay->EndDialogue();
+}
