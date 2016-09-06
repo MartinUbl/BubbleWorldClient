@@ -24,6 +24,7 @@
 #include "UI/ButtonWidget.h"
 #include "UI/TextFieldWidget.h"
 #include "UI/SplashMessageWidget.h"
+#include "UI/InventoryWidget.h"
 #include "Stages.h"
 #include "Gameplay.h"
 #include "Application.h"
@@ -32,6 +33,7 @@
 void GameStage::OnEnter()
 {
     m_chatWidget = nullptr;
+    m_inventoryWidget = nullptr;
     sDrawing->SetDrawWorld(true);
 }
 
@@ -69,6 +71,15 @@ void GameStage::OnKeyPress(int key, bool press)
                 break;
             case SDLK_d:
                 sGameplay->MovementKeyEvent(MOVE_RIGHT, press);
+                break;
+            case SDLK_i:
+                if (press)
+                {
+                    if (!m_inventoryWidget)
+                        OpenInventory();
+                    else
+                        CloseInventory();
+                }
                 break;
         }
     }
@@ -109,6 +120,9 @@ void GameStage::OnGlobalAction(GlobalActionIDs actionId, void* actionParam)
 
 void GameStage::OpenChat()
 {
+    if (m_chatWidget)
+        return;
+
     // create chat widget
     m_chatWidget = TextFieldWidget::Create(0, 0, 300, FONT_CHAT, L"", BWCOLOR_CHATFIELDBG, BWCOLOR_BLACK);
 
@@ -135,4 +149,25 @@ void GameStage::CloseChat()
 
     delete m_chatWidget;
     m_chatWidget = nullptr;
+}
+
+void GameStage::OpenInventory()
+{
+    if (m_inventoryWidget)
+        return;
+
+    m_inventoryWidget = InventoryWidget::Create();
+
+    sDrawing->AddUIWidget(m_inventoryWidget);
+}
+
+void GameStage::CloseInventory()
+{
+    if (!m_inventoryWidget)
+        return;
+
+    sDrawing->RemoveUIWidget(m_inventoryWidget);
+
+    delete m_inventoryWidget;
+    m_inventoryWidget = nullptr;
 }

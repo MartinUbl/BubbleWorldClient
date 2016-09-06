@@ -56,7 +56,7 @@ class ButtonWidget : public UIWidget
 
         void OnMouseEnter();
         void OnMouseLeave();
-        void OnMouseClick(bool left, bool press);
+        void OnMouseClick(bool left, bool press, uint32_t relativeX, uint32_t relativeY);
 
         // stores click action (does not bypass UI event broadcast)
         void SetClickFunction(std::function<void(void)> fnc);

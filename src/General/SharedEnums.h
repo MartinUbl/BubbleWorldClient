@@ -69,6 +69,7 @@ enum TalkType
     TALK_SAY = 0,
     TALK_YELL = 1,
     TALK_SERVER_MESSAGE = 2,
+    TALK_GENERIC_MESSAGE = 3,
 };
 
 // state of dialogue with NPC
@@ -76,6 +77,26 @@ enum DialogueState
 {
     DIALOGUE_DECIDE = 0,
     DIALOGUE_WAIT = 1,
+};
+
+// type of movement
+enum MovementType
+{
+    MOVEMENT_TYPE_NONE = 0,
+    MOVEMENT_TYPE_WALK = 1,
+    MOVEMENT_TYPE_SWIM = 2,
+};
+
+// item inventory operation
+enum ItemInventoryOperation
+{
+    ITEM_OP_NONE = 0,
+    ITEM_INV_CREATE_OBTAIN = 1,
+    ITEM_INV_CREATE_CRAFT = 2,
+    ITEM_INV_CREATE_FOUND = 3,
+    ITEM_INV_CREATE_STEAL = 4,
+    ITEM_INV_REMOVE_GIVE = 5,
+    ITEM_INV_REMOVE_DESTROY = 6,
 };
 
 #endif

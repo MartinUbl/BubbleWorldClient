@@ -35,6 +35,7 @@
 #include "Unit.h"
 #include "Player.h"
 #include "Drawing.h"
+#include "ItemCacheStorage.h"
 
 #include <sstream>
 #include <iomanip>
@@ -667,4 +668,67 @@ void PacketHandlers::HandleDialogueClose(SmartPacket& packet)
     // just end dialogue
 
     sGameplay->EndDialogue();
+}
+
+void PacketHandlers::HandleInventory(SmartPacket& packet)
+{
+    uint32_t guid, id, stackcount;
+    sGameplay->ClearInventoryRecords();
+
+    for (uint32_t i = 0; i < CHARACTER_INVENTORY_SLOTS; i++)
+    {
+        guid = packet.ReadUInt32();
+        if (!guid)
+            continue;
+
+        id = packet.ReadUInt32();
+        stackcount = packet.ReadUInt32();
+
+        sGameplay->SetInventorySlotContents(i, guid, id, stackcount);
+    }
+}
+
+void PacketHandlers::HandleItemQueryResponse(SmartPacket& packet)
+{
+    uint8_t status = packet.ReadUInt8();
+    if (status != GENERIC_STATUS_OK)
+        return;
+
+    uint32_t id = packet.ReadUInt32();
+    uint32_t imageId = packet.ReadUInt32();
+    std::wstring name = UTF8ToWString(packet.ReadString());
+    std::wstring description = UTF8ToWString(packet.ReadString());
+    uint32_t stackSize = packet.ReadUInt32();
+    uint32_t rarity = packet.ReadUInt32();
+
+    sItemCache->AddItemCacheEntry(id, imageId, name.c_str(), description.c_str(), stackSize, rarity, (uint32_t)time(nullptr));
+
+    sGameplay->SignalItemCacheEntryLoaded(id);
+}
+
+void PacketHandlers::HandleItemOperationInfo(SmartPacket& packet)
+{
+    uint8_t operation = packet.ReadUInt8();
+    uint32_t itemId = packet.ReadUInt32();
+    uint32_t count = packet.ReadUInt32();
+
+    sGameplay->ReportItemOperation(itemId, (ItemInventoryOperation)operation, count);
+}
+
+void PacketHandlers::HandleUpdateInventorySlot(SmartPacket& packet)
+{
+    uint32_t slot, guid, id, count;
+
+    slot = packet.ReadUInt32();
+    guid = packet.ReadUInt32();
+    // if guid equals zero, that means the slot is empty at all and no related data is appended
+    if (guid == 0)
+        sGameplay->SetInventorySlotContents(slot, 0, 0, 0);
+    else
+    {
+        id = packet.ReadUInt32();
+        count = packet.ReadUInt32();
+
+        sGameplay->SetInventorySlotContents(slot, guid, id, count);
+    }
 }

@@ -28,6 +28,8 @@ enum UIWidgetType
     UIWIDGET_SPLASHMESSAGE,
     UIWIDGET_TEXTFIELD,
     UIWIDGET_DIALOGUE,
+    UIWIDGET_INVENTORY,
+    UIWIDGET_STATICTOOLTIP,
 };
 
 // UI action type (used for propagating through application)

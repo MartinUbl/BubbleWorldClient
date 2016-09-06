@@ -49,6 +49,8 @@ enum AppFonts
     FONT_SMALLER = 3,
     FONT_NAME_TITLE = 4,
     FONT_CHAT = 5,
+    FONT_TOOLTIP_TITLE = 6,
+    FONT_TOOLTIP_TEXT = 7,
     MAX_FONT
 };
 
@@ -111,7 +113,7 @@ class Drawing
         // called when mouse moved
         void OnMouseMove(int32_t x, int32_t y);
         // called when mouse click event fired
-        void OnMouseClick(bool left, bool press);
+        void OnMouseClick(bool left, bool press, uint32_t x, uint32_t y);
         // called when key press has been fired; returns true if captured, false to propagate further
         bool OnKeyPress(int key, bool press);
         // called when in text input and the text is typed
@@ -132,6 +134,8 @@ class Drawing
         SDL_Surface* RenderFontWrapped(AppFonts fontId, const char* message, uint32_t width, SDL_Color color = defaultTextColor);
         // renders font on surface and wraps words to specified width
         SDL_Surface* RenderFontWrappedUnicode(AppFonts fontId, const wchar_t* message, uint32_t width, SDL_Color color = defaultTextColor);
+        // sets font outline; do not forget to set it back after being done!!
+        void SetFontOutline(AppFonts fontId, uint32_t outlinePx);
         // retrieves font height from font metrics
         uint16_t GetFontHeight(AppFonts fontId, bool useAscent = false);
         // queries SDL_Texture for its dimensions
@@ -142,6 +146,8 @@ class Drawing
         AppMouseCursors GetCurrentMouseCursor();
         // sets flag to redraw whole canvas
         void SetCanvasRedrawFlag();
+        // sets flag to redraw UI elements ("rerender")
+        void SetUIRedrawFlag();
 
     protected:
         // protected singleton constructor
@@ -149,10 +155,14 @@ class Drawing
 
         // draw everything connected with gameplay (world, objects, ..)
         void DrawWorld();
+        // redraws all UI elements (prerender to their textures), due to i.e. new image load, etc.
+        void RerenderUIElements();
 
     private:
         // should the canvas be redrawn?
         bool m_canvasRedraw;
+        // should the UI elements be redrawn?
+        bool m_uiRedraw;
         // should the world be drawn?
         bool m_drawWorld;
         // main window
@@ -161,7 +171,7 @@ class Drawing
         SDL_Renderer* m_renderer;
 
         // mutex for widget list
-        std::mutex m_widgetListMtx;
+        std::recursive_mutex m_widgetListMtx;
         // widget list to be drawn
         std::list<UIWidget*> m_widgetList;
         // element which is currently under mouse cursor
@@ -186,5 +196,26 @@ class Drawing
 };
 
 #define sDrawing Singleton<Drawing>::getInstance()
+
+/*
+ * Structure serving as scope guard for "critical" temporary change of font outline
+ */
+struct FontOutlineGuard
+{
+    // constructor sets font outline
+    FontOutlineGuard(AppFonts fontId, uint32_t outlinePx)
+    {
+        m_fontId = fontId;
+        sDrawing->SetFontOutline(m_fontId, outlinePx);
+    }
+    // destructor resets font outline back to normal
+    ~FontOutlineGuard()
+    {
+        sDrawing->SetFontOutline(m_fontId, 0);
+    }
+
+    // font that has its outline changed
+    AppFonts m_fontId;
+};
 
 #endif

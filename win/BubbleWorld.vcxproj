@@ -154,8 +154,10 @@
     <ClCompile Include="..\src\Display\Drawing.cpp" />
     <ClCompile Include="..\src\Display\UI\ButtonWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\DialogueWidget.cpp" />
+    <ClCompile Include="..\src\Display\UI\InventoryWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\LabelWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\SplashMessageWidget.cpp" />
+    <ClCompile Include="..\src\Display\UI\StaticTooltipWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\TextFieldWidget.cpp" />
     <ClCompile Include="..\src\Display\UI\UIWidget.cpp" />
     <ClCompile Include="..\src\Display\MouseCursor.cpp" />
@@ -183,6 +185,7 @@
     <ClCompile Include="..\src\Stages\MenuStage.cpp" />
     <ClCompile Include="..\src\Storage\FileStorage.cpp" />
     <ClCompile Include="..\src\Storage\ImageStorage.cpp" />
+    <ClCompile Include="..\src\Storage\ItemCacheStorage.cpp" />
     <ClCompile Include="..\src\Storage\MapStorage.cpp" />
     <ClCompile Include="..\src\Storage\StorageManager.cpp" />
   </ItemGroup>
@@ -196,8 +199,10 @@
     <ClInclude Include="..\src\Display\Drawing.h" />
     <ClInclude Include="..\src\Display\UI\ButtonWidget.h" />
     <ClInclude Include="..\src\Display\UI\DialogueWidget.h" />
+    <ClInclude Include="..\src\Display\UI\InventoryWidget.h" />
     <ClInclude Include="..\src\Display\UI\LabelWidget.h" />
     <ClInclude Include="..\src\Display\UI\SplashMessageWidget.h" />
+    <ClInclude Include="..\src\Display\UI\StaticTooltipWidget.h" />
     <ClInclude Include="..\src\Display\UI\TextFieldWidget.h" />
     <ClInclude Include="..\src\Display\UI\UIEnums.h" />
     <ClInclude Include="..\src\Display\UI\UIWidget.h" />
@@ -232,6 +237,7 @@
     <ClInclude Include="..\src\Stages\Stages.h" />
     <ClInclude Include="..\src\Storage\FileStorage.h" />
     <ClInclude Include="..\src\Storage\ImageStorage.h" />
+    <ClInclude Include="..\src\Storage\ItemCacheStorage.h" />
     <ClInclude Include="..\src\Storage\MapStorage.h" />
     <ClInclude Include="..\src\Storage\StorageManager.h" />
   </ItemGroup>

@@ -27,10 +27,13 @@ class Map;
 class Player;
 class DialogueWidget;
 struct MapHeader;
+struct ItemCacheEntry;
 enum MoveDirectionElement;
 
 // the maximum distance for player/object interaction
 #define INTERACTION_DISTANCE_ABSOLUTE 1.25f
+// maximum number of slots the character could have in his inventory
+#define CHARACTER_INVENTORY_SLOTS 100
 
 /*
  * Structure for character list record
@@ -72,6 +75,34 @@ struct ChatMessageRecord
 };
 
 /*
+ * Structure containing information about item in inventory
+ */
+struct InventoryItem
+{
+    // item GUID
+    uint32_t guid;
+    // item ID
+    uint32_t id;
+    // count of items in this slot
+    uint32_t stackCount;
+};
+
+/*
+ * Structure containing information about delayed item operation to be reported in chat
+ */
+struct DelayedItemOperationInfoRecord
+{
+    DelayedItemOperationInfoRecord(uint32_t _itemId, uint32_t _count, ItemInventoryOperation _operation) : itemId(_itemId), count(_count), operation(_operation) {};
+
+    // item ID
+    uint32_t itemId;
+    // count of items
+    uint32_t count;
+    // the operation to be reported
+    ItemInventoryOperation operation;
+};
+
+/*
  * Singleton class for maintaining gameplay related mechanics
  */
 class Gameplay
@@ -105,6 +136,14 @@ class Gameplay
         void SendChat(TalkType type, const wchar_t* str);
         // sends interaction request
         void SendInteractionRequest(WorldObject* object);
+        // sends inventory request
+        void SendInventoryRequest();
+        // sends request for swapping two slots in inventory
+        void SendSwapInventorySlots(uint32_t src, uint32_t dst);
+        // sends request for item deletion (in slot)
+        void SendRemoveInventorySlot(uint32_t slot);
+        // sends query for item
+        void SendItemQuery(uint32_t id);
 
         // creates local player on map
         void CreatePlayer(uint32_t mapId, float posX, float posY);
@@ -160,9 +199,25 @@ class Gameplay
         // when dialogue button signals gameplay class about decision made (button clicked)
         void SignalDialogueDecision(uint32_t id);
 
+        // retrieves item cache entry if present - if not, sends request
+        ItemCacheEntry* GetItemCacheEntry(uint32_t id);
+        // clears inventory records
+        void ClearInventoryRecords();
+        // sets inventory slot contents
+        void SetInventorySlotContents(uint32_t slot, uint32_t guid, uint32_t id, uint32_t stackCount);
+        // signals item cache entry was loaded
+        void SignalItemCacheEntryLoaded(uint32_t id);
+        // retrieves inventory slot contents
+        InventoryItem* GetInventorySlot(uint32_t slot);
+        // reports item operation
+        void ReportItemOperation(uint32_t itemId, ItemInventoryOperation operation, uint32_t count, bool delayed = false);
+
     protected:
         // protected singleton constructor
         Gameplay();
+
+        // checks delayed item operation list and reports newly loaded items
+        void CheckDelayedItemOperationsFor(uint32_t itemId);
 
     private:
         // guid of current player
@@ -181,6 +236,8 @@ class Gameplay
 
         // queue of chunks that are currently being retrieved or loaded
         std::list<ChunkLoadQueueRecord> m_chunkLoadQueue;
+        // set of item queries that has been sent
+        std::set<uint32_t> m_itemQuerySent;
         // chat message history
         std::list<ChatMessageRecord> m_chatMessages;
 
@@ -194,6 +251,11 @@ class Gameplay
         DialogueWidget* m_dialogueWidget;
         // current dialogue source object GUID
         uint64_t m_dialogueSourceGUID;
+
+        // character inventory
+        InventoryItem* m_inventory[CHARACTER_INVENTORY_SLOTS];
+        // list of delayed item operations
+        std::list<DelayedItemOperationInfoRecord> m_delayedItemOperationInfo;
 };
 
 #define sGameplay Singleton<Gameplay>::getInstance()

@@ -168,7 +168,7 @@ void SplashMessageWidget::UpdateCanvas()
     UIWidget::UpdateCanvas();
 }
 
-void SplashMessageWidget::OnMouseClick(bool left, bool press)
+void SplashMessageWidget::OnMouseClick(bool left, bool press, uint32_t relativeX, uint32_t relativeY)
 {
     // if not cancellable, do not do anything
     if (!m_cancellable)

@@ -182,7 +182,7 @@ void ButtonWidget::OnMouseLeave()
     SetButtonState(BUTTON_STATE_NORMAL);
 }
 
-void ButtonWidget::OnMouseClick(bool left, bool press)
+void ButtonWidget::OnMouseClick(bool left, bool press, uint32_t relativeX, uint32_t relativeY)
 {
     // on press, just acknowledge user he's clicking on button
     if (press)

@@ -26,10 +26,11 @@
 #define BWCOLOR_BUZNABLUE       {127, 127, 255}
 #define BWCOLOR_CHATFIELDBG     {192, 192, 192}
 #define BWCOLOR_BLACK           {  0,   0,   0}
+#define BWCOLOR_WHITE           {255, 255, 255}
 
 #define BWCOLOR_CHAT_PLAYERNAME { 32,  31, 127}
 #define BWCOLOR_CHAT_TEXT       {  0,   0,   0}
-#define BWCOLOR_CHAT_SERVERMSG  {255,  96,  96}
+#define BWCOLOR_CHAT_SERVERMSG  {127,  64,  64}
 
 #define BWCOLOR_NAME_PLAYER     {255, 255, 255}
 #define BWCOLOR_NAME_NPC_FRIEND {127, 255, 127}

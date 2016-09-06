@@ -37,7 +37,9 @@ static const FontParam appFontParams[MAX_FONT] = {
     { "Gretoon.ttf", 20 },                      // FONT_CAPTION
     { "SpecialElite.ttf", 12 },                 // FONT_SMALLER
     { "SpecialElite.ttf", 14 },                 // FONT_NAME_TITLE
-    { "GFSNeohellenic.ttf", 15 }                // FONT_CHAT
+    { "GFSNeohellenic.ttf", 15 },               // FONT_CHAT
+    { "GFSNeohellenic.ttf", 16 },               // FONT_TOOLTIP_TITLE
+    { "GFSNeohellenic.ttf", 12 }                // FONT_TOOLTIP_TEXT
 };
 
 // application cursor filenames
@@ -49,6 +51,7 @@ static const char* appCursorFilenames[MAX_MOUSE_CURSOR] = {
 Drawing::Drawing()
 {
     m_canvasRedraw = true;
+    m_uiRedraw = false;
     m_hoverElement = nullptr;
     m_focusElement = nullptr;
     m_drawWorld = false;
@@ -156,6 +159,11 @@ void Drawing::SetCanvasRedrawFlag()
     m_canvasRedraw = true;
 }
 
+void Drawing::SetUIRedrawFlag()
+{
+    m_uiRedraw = true;
+}
+
 void Drawing::Update()
 {
     // increase FPS counter
@@ -175,6 +183,13 @@ void Drawing::Update()
     if (!m_canvasRedraw)
         return;
 
+    // redraw UI elements if needed
+    if (m_uiRedraw)
+    {
+        RerenderUIElements();
+        m_uiRedraw = false;
+    }
+
     // should we draw world?
     if (m_drawWorld)
         DrawWorld();
@@ -183,7 +198,7 @@ void Drawing::Update()
 
     // lock scope for UI drawing
     {
-        std::unique_lock<std::mutex> lck(m_widgetListMtx);
+        std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
         for (std::list<UIWidget*>::iterator itr = m_widgetList.begin(); itr != m_widgetList.end(); ++itr)
             (*itr)->OnDraw();
     }
@@ -192,6 +207,14 @@ void Drawing::Update()
     SDL_RenderPresent(m_renderer);
 
     m_canvasRedraw = false;
+}
+
+void Drawing::RerenderUIElements()
+{
+    std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
+
+    for (std::list<UIWidget*>::iterator itr = m_widgetList.begin(); itr != m_widgetList.end(); ++itr)
+        (*itr)->UpdateCanvas();
 }
 
 void Drawing::DrawWorld()
@@ -396,7 +419,7 @@ void Drawing::AddUIWidget(UIWidget* widget)
 
     // lock scope
     {
-        std::unique_lock<std::mutex> lck(m_widgetListMtx);
+        std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
 
         m_widgetList.push_back(widget);
     }
@@ -437,7 +460,7 @@ void Drawing::RemoveUIWidgetsOfType(UIWidgetType type)
 
     // lock scope
     {
-        std::unique_lock<std::mutex> lck(m_widgetListMtx);
+        std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
         // look for UI widgets to be removed
         for (std::list<UIWidget*>::iterator itr = m_widgetList.begin(); itr != m_widgetList.end(); ++itr)
         {
@@ -456,7 +479,7 @@ void Drawing::RemoveUIWidgetsOfType(UIWidgetType type)
 
 void Drawing::DestroyUI()
 {
-    std::unique_lock<std::mutex> lck(m_widgetListMtx);
+    std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
 
     // after this, no hover or focus element will be present
     m_hoverElement = nullptr;
@@ -492,7 +515,7 @@ bool Drawing::HasUIWidgetHover()
 
 void Drawing::OnMouseMove(int32_t x, int32_t y)
 {
-    std::unique_lock<std::mutex> lck(m_widgetListMtx);
+    std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
 
     // leaving current hover element?
     if (m_hoverElement && !m_hoverElement->IsCoordsInside(x, y))
@@ -509,7 +532,7 @@ void Drawing::OnMouseMove(int32_t x, int32_t y)
         {
             // if the element is already marked as hover element, do nothing
             if (m_hoverElement == *itr)
-                return;
+                break;
 
             // if there was any hover element before, call leave event method
             if (m_hoverElement)
@@ -521,17 +544,21 @@ void Drawing::OnMouseMove(int32_t x, int32_t y)
             break;
         }
     }
+
+    // call mousemove method on hover element, if any
+    if (m_hoverElement)
+        m_hoverElement->OnMouseMove(x - m_hoverElement->GetPositionX(), y - m_hoverElement->GetPositionY());
 }
 
-void Drawing::OnMouseClick(bool left, bool press)
+void Drawing::OnMouseClick(bool left, bool press, uint32_t x, uint32_t y)
 {
-    std::unique_lock<std::mutex> lck(m_widgetListMtx);
+    std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
 
     // we call it only on hover element
     if (!m_hoverElement)
         return;
 
-    m_hoverElement->OnMouseClick(left, press);
+    m_hoverElement->OnMouseClick(left, press, x - m_hoverElement->GetPositionX(), y - m_hoverElement->GetPositionY());
 
     // note: the element could remove itself in OnMouseClick call
     // therefore m_hoverElement would be nullptr
@@ -555,7 +582,7 @@ void Drawing::SetFocusElement(UIWidget* widget)
 
 bool Drawing::OnKeyPress(int key, bool press)
 {
-    std::unique_lock<std::mutex> lck(m_widgetListMtx);
+    std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
 
     // we propagate keypress event only to focused elements
     if (!m_focusElement)
@@ -566,7 +593,7 @@ bool Drawing::OnKeyPress(int key, bool press)
 
 void Drawing::OnTextInput(char* orig)
 {
-    std::unique_lock<std::mutex> lck(m_widgetListMtx);
+    std::unique_lock<std::recursive_mutex> lck(m_widgetListMtx);
 
     // we propagate keypress event only to focused elements
     if (!m_focusElement)
@@ -596,6 +623,11 @@ SDL_Surface* Drawing::RenderFontWrapped(AppFonts fontId, const char* message, ui
 SDL_Surface* Drawing::RenderFontWrappedUnicode(AppFonts fontId, const wchar_t* message, uint32_t width, SDL_Color color)
 {
     return TTF_RenderUNICODE_Blended_Wrapped(m_fonts[fontId], (const uint16_t*)message, color, width);
+}
+
+void Drawing::SetFontOutline(AppFonts fontId, uint32_t outlinePx)
+{
+    TTF_SetFontOutline(m_fonts[fontId], (int)outlinePx);
 }
 
 uint16_t Drawing::GetFontHeight(AppFonts fontId, bool useAscent)

@@ -151,6 +151,15 @@
     <ClCompile Include="..\src\Display\UI\DialogueWidget.cpp">
       <Filter>src\Display\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Storage\ItemCacheStorage.cpp">
+      <Filter>src\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\UI\InventoryWidget.cpp">
+      <Filter>src\Display\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\UI\StaticTooltipWidget.cpp">
+      <Filter>src\Display\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\General\Application.h">
@@ -292,6 +301,15 @@
       <Filter>src\Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Display\UI\DialogueWidget.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Storage\ItemCacheStorage.h">
+      <Filter>src\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\InventoryWidget.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\StaticTooltipWidget.h">
       <Filter>src\Display\UI</Filter>
     </ClInclude>
   </ItemGroup>

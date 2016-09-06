@@ -56,7 +56,7 @@ class SplashMessageWidget : public UIWidget
         // updates prerendered texture
         void UpdateCanvas();
 
-        void OnMouseClick(bool left, bool press);
+        void OnMouseClick(bool left, bool press, uint32_t relativeX, uint32_t relativeY);
 
         // sets foreground text
         void SetText(const wchar_t* text);

@@ -127,6 +127,7 @@ class ConnectingStage : public StageTemplate
 };
 
 class TextFieldWidget;
+class InventoryWidget;
 
 /*
  * Game stage class
@@ -150,9 +151,16 @@ class GameStage : public StageTemplate
         // closes chat (destroys widget)
         void CloseChat();
 
+        // opens inventory (creates widget)
+        void OpenInventory();
+        // closes inventory (destroys widget)
+        void CloseInventory();
+
     private:
         // chat widget input field
         TextFieldWidget* m_chatWidget;
+        // inventory widget
+        InventoryWidget* m_inventoryWidget;
 };
 
 #endif

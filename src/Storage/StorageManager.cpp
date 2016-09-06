@@ -24,11 +24,13 @@
 #include "FileStorage.h"
 #include "ImageStorage.h"
 #include "MapStorage.h"
+#include "ItemCacheStorage.h"
 
 // array of file storages to load
 static FileDBStorageParams fileDatabases[MAX_SQLITE_DB] = {
     { "images.db", instantiateFileStorage<ImageStorage> },
-    { "maps.db", instantiateFileStorage<MapStorage> }
+    { "maps.db", instantiateFileStorage<MapStorage> },
+    { "itemcache.db", instantiateFileStorage<ItemCacheStorage> }
 };
 
 StorageManager::StorageManager()

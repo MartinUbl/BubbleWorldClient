@@ -49,6 +49,8 @@ void ResourceManager::SignalResourceRetrieved(ResourceType type, uint32_t id)
     {
         case RSTYPE_IMAGE:
             LoadImageResource((ImageResource*)m_resources[RSTYPE_IMAGE][id]);
+            sDrawing->SetUIRedrawFlag();
+            sDrawing->SetCanvasRedrawFlag();
             break;
         default:
             break;
@@ -67,6 +69,8 @@ void ResourceManager::SignalResourceMetadataRetrieved(ResourceType type, uint32_
     {
         case RSTYPE_IMAGE:
             LoadImageResourceMeta((ImageResource*)m_resources[RSTYPE_IMAGE][id]);
+            sDrawing->SetUIRedrawFlag();
+            sDrawing->SetCanvasRedrawFlag();
             break;
         default:
             break;

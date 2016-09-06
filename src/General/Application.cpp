@@ -134,7 +134,7 @@ int Application::Run()
                         else if (ev.button.button == 2)
                             m_stage->OnMouseClick(false, true);
                     }
-                    sDrawing->OnMouseClick(ev.button.button == 1, true);
+                    sDrawing->OnMouseClick(ev.button.button == 1, true, m_mouseX, m_mouseY);
                     break;
                 // mouse button up - signal UI and stage
                 case SDL_MOUSEBUTTONUP:
@@ -147,7 +147,7 @@ int Application::Run()
                         else if (ev.button.button == 2)
                             m_stage->OnMouseClick(false, false);
                     }
-                    sDrawing->OnMouseClick(ev.button.button == 1, false);
+                    sDrawing->OnMouseClick(ev.button.button == 1, false, m_mouseX, m_mouseY);
                     break;
                 // key pressed event - signal UI and stage
                 case SDL_KEYDOWN:

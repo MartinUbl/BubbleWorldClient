@@ -31,6 +31,7 @@
 #include "Drawing.h"
 #include "Colors.h"
 #include "UI\DialogueWidget.h"
+#include "ResourceManager.h"
 
 #include "WorldObject.h"
 
@@ -116,6 +117,10 @@ void Gameplay::MovementKeyEvent(MoveDirectionElement dir, bool press)
 
 void Gameplay::CreatePlayer(uint32_t mapId, float posX, float posY)
 {
+    // init inventory
+    for (uint32_t i = 0; i < CHARACTER_INVENTORY_SLOTS; i++)
+        m_inventory[i] = nullptr;
+
     // create local player instance
     m_player = new Player();
 
@@ -200,6 +205,11 @@ void Gameplay::SignalMapLoaded(uint32_t mapId)
     // signal server about our arrival
     SmartPacket pkt(CP_WORLD_ENTER_COMPLETE);
     sNetwork->SendPacket(pkt);
+
+    // and also request everything related to game and character
+
+    // request inventory
+    SendInventoryRequest();
 }
 
 void Gameplay::SignalNameQueryResolved(uint64_t guid, const wchar_t* name)
@@ -295,6 +305,39 @@ void Gameplay::SendInteractionRequest(WorldObject* object)
 
     SmartPacket pkt(CP_INTERACTION_REQUEST);
     pkt.WriteUInt64(object->GetGUID());
+    sNetwork->SendPacket(pkt);
+}
+
+void Gameplay::SendInventoryRequest()
+{
+    SmartPacket pkt(CP_INVENTORY_QUERY);
+    sNetwork->SendPacket(pkt);
+}
+
+void Gameplay::SendSwapInventorySlots(uint32_t src, uint32_t dst)
+{
+    SmartPacket pkt(CP_INVENTORY_MOVE_ITEM);
+    pkt.WriteUInt32(src);
+    pkt.WriteUInt32(dst);
+    sNetwork->SendPacket(pkt);
+}
+
+void Gameplay::SendRemoveInventorySlot(uint32_t slot)
+{
+    SmartPacket pkt(CP_INVENTORY_REMOVE_ITEM);
+    pkt.WriteUInt32(slot);
+    sNetwork->SendPacket(pkt);
+}
+
+void Gameplay::SendItemQuery(uint32_t id)
+{
+    if (m_itemQuerySent.find(id) != m_itemQuerySent.end())
+        return;
+
+    m_itemQuerySent.insert(id);
+
+    SmartPacket pkt(CP_ITEM_QUERY);
+    pkt.WriteUInt32(id);
     sNetwork->SendPacket(pkt);
 }
 
@@ -432,10 +475,10 @@ void Gameplay::AddChatMessage(TalkType type, const wchar_t* author, const wchar_
     std::wstring toPrint = L"";
 
     // server messages behaves differently
-    if (type == TALK_SERVER_MESSAGE)
+    if (type == TALK_SERVER_MESSAGE || type == TALK_GENERIC_MESSAGE)
     {
         // prepare base
-        std::wstring printmsg = std::wstring(L"[Server]: ") + message;
+        std::wstring printmsg = (type == TALK_SERVER_MESSAGE) ? std::wstring(L"[Server]: ") + message : message;
         // render wrapped message
         SDL_Surface* msgsurf = sDrawing->RenderFontWrappedUnicode(FONT_CHAT, printmsg.c_str(), CHAT_MSG_FRAME_WIDTH, BWCOLOR_CHAT_SERVERMSG);
 
@@ -598,4 +641,133 @@ void Gameplay::SignalDialogueDecision(uint32_t id)
     pkt.WriteUInt64(m_dialogueSourceGUID);
     pkt.WriteUInt32(id);
     sNetwork->SendPacket(pkt);
+}
+
+ItemCacheEntry* Gameplay::GetItemCacheEntry(uint32_t id)
+{
+    ItemCacheEntry* en = sItemCache->GetItemCacheEntry(id);
+    if (en)
+        return en;
+
+    // if we don't know this item, request data to be cached
+    SendItemQuery(id);
+    return nullptr;
+}
+
+void Gameplay::ClearInventoryRecords()
+{
+    for (uint32_t i = 0; i < CHARACTER_INVENTORY_SLOTS; i++)
+    {
+        if (m_inventory[i])
+            delete m_inventory[i];
+
+        m_inventory[i] = nullptr;
+    }
+}
+
+void Gameplay::SetInventorySlotContents(uint32_t slot, uint32_t guid, uint32_t id, uint32_t stackCount)
+{
+    // guid == 0 means we are removing item from that slot
+    if (guid == 0)
+    {
+        if (m_inventory[slot])
+            delete m_inventory[slot];
+
+        m_inventory[slot] = nullptr;
+
+        sDrawing->SetUIRedrawFlag();
+        sDrawing->SetCanvasRedrawFlag();
+
+        return;
+    }
+
+    // if there is no inventory item record, create it
+    if (!m_inventory[slot])
+        m_inventory[slot] = new InventoryItem();
+
+    m_inventory[slot]->guid = guid;
+    m_inventory[slot]->id = id;
+    m_inventory[slot]->stackCount = stackCount;
+
+    sDrawing->SetUIRedrawFlag();
+    sDrawing->SetCanvasRedrawFlag();
+}
+
+void Gameplay::SignalItemCacheEntryLoaded(uint32_t id)
+{
+    CheckDelayedItemOperationsFor(id);
+
+    // these flags will cause UI elements to be rerendered (i.e. inventory), and then redrawn
+    sDrawing->SetUIRedrawFlag();
+    sDrawing->SetCanvasRedrawFlag();
+
+    m_itemQuerySent.erase(id);
+}
+
+InventoryItem* Gameplay::GetInventorySlot(uint32_t slot)
+{
+    if (slot >= CHARACTER_INVENTORY_SLOTS)
+        return nullptr;
+
+    return m_inventory[slot];
+}
+
+void Gameplay::ReportItemOperation(uint32_t itemId, ItemInventoryOperation operation, uint32_t count, bool delayed)
+{
+    if (operation == ITEM_OP_NONE)
+        return;
+
+    ItemCacheEntry* ic = sItemCache->GetItemCacheEntry(itemId);
+    if (!ic)
+    {
+        if (!delayed)
+            m_delayedItemOperationInfo.push_back(DelayedItemOperationInfoRecord(itemId, count, operation));
+        return;
+    }
+
+    std::wstring msg = L"";
+
+    switch (operation)
+    {
+        case ITEM_INV_CREATE_OBTAIN:
+            msg = L"Obdržen pøedmìt";
+            break;
+        case ITEM_INV_CREATE_CRAFT:
+            msg = L"Vyroben pøedmìt";
+            break;
+        case ITEM_INV_CREATE_FOUND:
+            msg = L"Nalezen pøedmìt";
+            break;
+        case ITEM_INV_CREATE_STEAL:
+            msg = L"Ukraden pøedmìt";
+            break;
+        case ITEM_INV_REMOVE_GIVE:
+            msg = L"Odevzdán pøedmìt";
+            break;
+        case ITEM_INV_REMOVE_DESTROY:
+            msg = L"Znièen pøedmìt";
+            break;
+    }
+
+    msg += L": ";
+    msg += ic->name;
+
+    if (count > 1)
+        msg += L" (" + std::to_wstring(count) + L"x)";
+
+    AddChatMessage(TALK_GENERIC_MESSAGE, nullptr, msg.c_str());
+}
+
+void Gameplay::CheckDelayedItemOperationsFor(uint32_t itemId)
+{
+    for (std::list<DelayedItemOperationInfoRecord>::iterator itr = m_delayedItemOperationInfo.begin(); itr != m_delayedItemOperationInfo.end(); )
+    {
+        if ((*itr).itemId == itemId)
+        {
+            ReportItemOperation((*itr).itemId, (*itr).operation, (*itr).count, true);
+            itr = m_delayedItemOperationInfo.erase(itr);
+        }
+        else
+            ++itr;
+    }
 }

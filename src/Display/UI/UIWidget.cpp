@@ -196,7 +196,12 @@ void UIWidget::OnMouseLeave()
     // no implicit behavioour
 }
 
-void UIWidget::OnMouseClick(bool left, bool press)
+void UIWidget::OnMouseClick(bool left, bool press, uint32_t relativeX, uint32_t relativeY)
+{
+    // no implicit behaviour
+}
+
+void UIWidget::OnMouseMove(uint32_t relativeX, uint32_t relativeY)
 {
     // no implicit behaviour
 }

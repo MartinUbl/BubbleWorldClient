@@ -87,7 +87,9 @@ class UIWidget
         // when mouse leaves the widget area
         virtual void OnMouseLeave();
         // when user clicks into widget area
-        virtual void OnMouseClick(bool left, bool press);
+        virtual void OnMouseClick(bool left, bool press, uint32_t relativeX, uint32_t relativeY);
+        // when user moves the mouse over widget area
+        virtual void OnMouseMove(uint32_t relativeX, uint32_t relativeY);
         // when the widget has focus and user presses key; returns true when captured, false to propagate key press further
         virtual bool OnKeyPress(int key, bool press);
         // when the text is typed

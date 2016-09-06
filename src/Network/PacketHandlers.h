@@ -79,6 +79,10 @@ namespace PacketHandlers
     PACKET_HANDLER(HandleChatMessage);
     PACKET_HANDLER(HandleDialogueData);
     PACKET_HANDLER(HandleDialogueClose);
+    PACKET_HANDLER(HandleInventory);
+    PACKET_HANDLER(HandleItemQueryResponse);
+    PACKET_HANDLER(HandleItemOperationInfo);
+    PACKET_HANDLER(HandleUpdateInventorySlot);
 };
 
 // table of packet handlers; the opcode is also an index here
@@ -126,6 +130,14 @@ static PacketHandlerStructure PacketHandlerTable[] = {
     { &PacketHandlers::HandleDialogueData,      STATE_RESTRICTION_GAME  },      // SP_DIALOGUE_DATA
     { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_DIALOGUE_DECISION
     { &PacketHandlers::HandleDialogueClose,     STATE_RESTRICTION_GAME  },      // SP_DIALOGUE_CLOSE
+    { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_INVENTORY_QUERY
+    { &PacketHandlers::HandleInventory,         STATE_RESTRICTION_GAME  },      // SP_INVENTORY
+    { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_ITEM_QUERY
+    { &PacketHandlers::HandleItemQueryResponse, STATE_RESTRICTION_GAME  },      // SP_ITEM_QUERY_RESPONSE
+    { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_INVENTORY_MOVE_ITEM
+    { &PacketHandlers::Handle_ServerSide,       STATE_RESTRICTION_NEVER },      // CP_INVENTORY_REMOVE_ITEM
+    { &PacketHandlers::HandleItemOperationInfo, STATE_RESTRICTION_GAME  },      // SP_ITEM_OPERATION_INFO
+    { &PacketHandlers::HandleUpdateInventorySlot,STATE_RESTRICTION_GAME },      // SP_UPDATE_INVENTORY_SLOT
 };
 
 #endif
