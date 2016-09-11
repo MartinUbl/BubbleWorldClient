@@ -271,119 +271,121 @@ void InventoryWidget::UpdateCanvas()
     // create texture to be used as background
     m_widgetCanvas = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, GetWidth(), GetHeight());
 
-    SDL_SetRenderTarget(renderer, m_widgetCanvas);
-
-    // clear with bg color
-    SDL_SetRenderDrawColor(renderer, defaultInventoryBackgroundColor.r, defaultInventoryBackgroundColor.g, defaultInventoryBackgroundColor.b, 0xFF);
-    SDL_RenderClear(renderer);
-
-    // prepare destination rectangle for drawing slots
-    SDL_Rect dst;
-    SDL_Rect countDest;
-    dst.x = inventoryPaddingH;
-    dst.y = inventoryPaddingV;
-    dst.w = INVENTORY_ITEM_SIZE_PX;
-    dst.h = INVENTORY_ITEM_SIZE_PX;
-    InventoryItem* item;
-
-    // prepare arrow color; if we cannot move higher, change color to "disabled"
-    SDL_Color arrCol = defaultInventoryArrowColor;
-    if (m_rowOffset == 0)
-        arrCol = defaultInventoryArrowDisabledColor;
-
-    // draw arrow "up"
-    filledTrigonRGBA(renderer,
-        GetWidth() / 2, 5,
-        GetWidth() / 2 - inventoryPaddingV + 5, inventoryPaddingV - 5,
-        GetWidth() / 2 + inventoryPaddingV - 5, inventoryPaddingV - 5,
-        arrCol.r, arrCol.g, arrCol.b, 0xFF);
-
-    // do the same for arrow "down"
-
-    if (m_rowOffset + INVENTORY_SLOT_PER_COLUMN >= CHARACTER_INVENTORY_SLOTS / INVENTORY_SLOT_PER_ROW)
-        arrCol = defaultInventoryArrowDisabledColor;
-    else
-        arrCol = defaultInventoryArrowColor;
-
-    filledTrigonRGBA(renderer,
-        GetWidth() / 2, GetHeight() - 5,
-        GetWidth() / 2 - inventoryPaddingV + 5, GetHeight() - inventoryPaddingV + 5,
-        GetWidth() / 2 + inventoryPaddingV - 5, GetHeight() - inventoryPaddingV + 5,
-        arrCol.r, arrCol.g, arrCol.b, 0xFF);
-
-    // draw slots; consider row offset set by moving using arrows
-    for (uint32_t i = m_rowOffset; i < (uint32_t)(m_rowOffset + INVENTORY_SLOT_PER_ROW); i++)
+    // render target scope
     {
-        for (uint32_t j = 0; j < INVENTORY_SLOT_PER_COLUMN; j++)
+        RenderTargetGuard rguard(m_widgetCanvas);
+
+        // clear with bg color
+        SDL_SetRenderDrawColor(renderer, defaultInventoryBackgroundColor.r, defaultInventoryBackgroundColor.g, defaultInventoryBackgroundColor.b, 0xFF);
+        SDL_RenderClear(renderer);
+
+        // prepare destination rectangle for drawing slots
+        SDL_Rect dst;
+        SDL_Rect countDest;
+        dst.x = inventoryPaddingH;
+        dst.y = inventoryPaddingV;
+        dst.w = INVENTORY_ITEM_SIZE_PX;
+        dst.h = INVENTORY_ITEM_SIZE_PX;
+        InventoryItem* item;
+
+        // prepare arrow color; if we cannot move higher, change color to "disabled"
+        SDL_Color arrCol = defaultInventoryArrowColor;
+        if (m_rowOffset == 0)
+            arrCol = defaultInventoryArrowDisabledColor;
+
+        // draw arrow "up"
+        filledTrigonRGBA(renderer,
+            GetWidth() / 2, 5,
+            GetWidth() / 2 - inventoryPaddingV + 5, inventoryPaddingV - 5,
+            GetWidth() / 2 + inventoryPaddingV - 5, inventoryPaddingV - 5,
+            arrCol.r, arrCol.g, arrCol.b, 0xFF);
+
+        // do the same for arrow "down"
+
+        if (m_rowOffset + INVENTORY_SLOT_PER_COLUMN >= CHARACTER_INVENTORY_SLOTS / INVENTORY_SLOT_PER_ROW)
+            arrCol = defaultInventoryArrowDisabledColor;
+        else
+            arrCol = defaultInventoryArrowColor;
+
+        filledTrigonRGBA(renderer,
+            GetWidth() / 2, GetHeight() - 5,
+            GetWidth() / 2 - inventoryPaddingV + 5, GetHeight() - inventoryPaddingV + 5,
+            GetWidth() / 2 + inventoryPaddingV - 5, GetHeight() - inventoryPaddingV + 5,
+            arrCol.r, arrCol.g, arrCol.b, 0xFF);
+
+        // draw slots; consider row offset set by moving using arrows
+        for (uint32_t i = m_rowOffset; i < (uint32_t)(m_rowOffset + INVENTORY_SLOT_PER_ROW); i++)
         {
-            // if the item is not present, draw blank slot
-            item = sGameplay->GetInventorySlot(i * INVENTORY_SLOT_PER_ROW + j);
-            if (!item)
-                SDL_RenderCopy(renderer, emptyslottexture, nullptr, &dst);
-            else // otherwise draw "taken" slot and image of item, if available
+            for (uint32_t j = 0; j < INVENTORY_SLOT_PER_COLUMN; j++)
             {
-                SDL_RenderCopy(renderer, takenslottexture, nullptr, &dst);
-
-                ItemCacheEntry* ic = sGameplay->GetItemCacheEntry(item->id);
-                // render just if the item cache entry and its image is available at all
-                if (ic && ic->imageId != 0)
+                // if the item is not present, draw blank slot
+                item = sGameplay->GetInventorySlot(i * INVENTORY_SLOT_PER_ROW + j);
+                if (!item)
+                    SDL_RenderCopy(renderer, emptyslottexture, nullptr, &dst);
+                else // otherwise draw "taken" slot and image of item, if available
                 {
-                    SDL_Texture* itemtxt = sResourceManager->GetImage(ic->imageId);
-                    if (itemtxt)
-                        SDL_RenderCopy(renderer, itemtxt, nullptr, &dst);
+                    SDL_RenderCopy(renderer, takenslottexture, nullptr, &dst);
 
-                    // if the item has more than one item in stack, draw count
-                    if (item->stackCount > 1)
+                    ItemCacheEntry* ic = sGameplay->GetItemCacheEntry(item->id);
+                    // render just if the item cache entry and its image is available at all
+                    if (ic && ic->imageId != 0)
                     {
-                        SDL_Surface* countsurf;
+                        SDL_Texture* itemtxt = sResourceManager->GetImage(ic->imageId);
+                        if (itemtxt)
+                            SDL_RenderCopy(renderer, itemtxt, nullptr, &dst);
 
-                        // at first render background layer
-
-                        // outline guard scope
+                        // if the item has more than one item in stack, draw count
+                        if (item->stackCount > 1)
                         {
-                            FontOutlineGuard fg(FONT_TOOLTIP_TEXT, 2);
-                            countsurf = sDrawing->RenderFontUnicode(FONT_TOOLTIP_TEXT, std::to_wstring(item->stackCount).c_str(), BWCOLOR_BLACK);
+                            SDL_Surface* countsurf;
+
+                            // at first render background layer
+
+                            // outline guard scope
+                            {
+                                FontOutlineGuard fg(FONT_TOOLTIP_TEXT, 2);
+                                countsurf = sDrawing->RenderFontUnicode(FONT_TOOLTIP_TEXT, std::to_wstring(item->stackCount).c_str(), BWCOLOR_BLACK);
+                            }
+
+                            countDest.w = countsurf->w;
+                            countDest.h = countsurf->h;
+                            SDL_Texture* counttxt = SDL_CreateTextureFromSurface(renderer, countsurf);
+                            SDL_FreeSurface(countsurf);
+
+                            countDest.x = dst.x + INVENTORY_ITEM_SIZE_PX - countDest.w - 1;
+                            countDest.y = dst.y + INVENTORY_ITEM_SIZE_PX - countDest.h - 1;
+
+                            SDL_RenderCopy(renderer, counttxt, nullptr, &countDest);
+                            SDL_DestroyTexture(counttxt);
+
+                            // render foreground layer
+                            countsurf = sDrawing->RenderFontUnicode(FONT_TOOLTIP_TEXT, std::to_wstring(item->stackCount).c_str(), BWCOLOR_WHITE);
+
+                            countDest.w = countsurf->w;
+                            countDest.h = countsurf->h;
+                            counttxt = SDL_CreateTextureFromSurface(renderer, countsurf);
+                            SDL_FreeSurface(countsurf);
+
+                            // this is approximate, the real position change might be different
+                            countDest.x += 2;
+                            countDest.y += 2;
+
+                            SDL_RenderCopy(renderer, counttxt, nullptr, &countDest);
+                            SDL_DestroyTexture(counttxt);
                         }
-
-                        countDest.w = countsurf->w;
-                        countDest.h = countsurf->h;
-                        SDL_Texture* counttxt = SDL_CreateTextureFromSurface(renderer, countsurf);
-                        SDL_FreeSurface(countsurf);
-
-                        countDest.x = dst.x + INVENTORY_ITEM_SIZE_PX - countDest.w - 1;
-                        countDest.y = dst.y + INVENTORY_ITEM_SIZE_PX - countDest.h - 1;
-
-                        SDL_RenderCopy(renderer, counttxt, nullptr, &countDest);
-                        SDL_DestroyTexture(counttxt);
-
-                        // render foreground layer
-                        countsurf = sDrawing->RenderFontUnicode(FONT_TOOLTIP_TEXT, std::to_wstring(item->stackCount).c_str(), BWCOLOR_WHITE);
-
-                        countDest.w = countsurf->w;
-                        countDest.h = countsurf->h;
-                        counttxt = SDL_CreateTextureFromSurface(renderer, countsurf);
-                        SDL_FreeSurface(countsurf);
-
-                        // this is approximate, the real position change might be different
-                        countDest.x += 2;
-                        countDest.y += 2;
-
-                        SDL_RenderCopy(renderer, counttxt, nullptr, &countDest);
-                        SDL_DestroyTexture(counttxt);
                     }
                 }
+
+                // move on X axis
+                dst.x += INVENTORY_ITEM_SIZE_PX + inventoryItemSpacing;
             }
 
-            // move on X axis
-            dst.x += INVENTORY_ITEM_SIZE_PX + inventoryItemSpacing;
+            // reset X axis and move on Y axis
+            dst.y += INVENTORY_ITEM_SIZE_PX + inventoryItemSpacing;
+            dst.x = inventoryPaddingH;
         }
 
-        // reset X axis and move on Y axis
-        dst.y += INVENTORY_ITEM_SIZE_PX + inventoryItemSpacing;
-        dst.x = inventoryPaddingH;
     }
-
-    SDL_SetRenderTarget(renderer, nullptr);
 
     SDL_RenderPresent(renderer);
 

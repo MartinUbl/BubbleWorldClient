@@ -223,4 +223,21 @@ struct FontOutlineGuard
     AppFonts m_fontId;
 };
 
+/*
+ * Structure serving as scope guard for "critical" temporary change of renderer target
+ */
+struct RenderTargetGuard
+{
+    // constructor sets render target
+    RenderTargetGuard(SDL_Texture* target)
+    {
+        SDL_SetRenderTarget(sDrawing->GetRenderer(), target);
+    }
+    // destructor resets render target back to screen
+    ~RenderTargetGuard()
+    {
+        SDL_SetRenderTarget(sDrawing->GetRenderer(), nullptr);
+    }
+};
+
 #endif

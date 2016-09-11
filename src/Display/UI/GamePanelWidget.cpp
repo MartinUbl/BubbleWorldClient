@@ -132,40 +132,41 @@ void GamePanelWidget::UpdateCanvas()
 
     SDL_Texture* bgImg = sResourceManager->GetInternalImage(3);
 
-    SDL_SetRenderTarget(renderer, m_widgetCanvas);
-
-    // clear texture background, allow transparency
-    SDL_SetTextureBlendMode(m_widgetCanvas, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    SDL_RenderClear(renderer);
-
-    SDL_Rect dst;
-    dst.w = GAMEPANEL_BOX_SIZE_PX;
-    dst.h = GAMEPANEL_BOX_SIZE_PX;
-    dst.x = 0;
-    dst.y = 0;
-
-    // draw underlaying boxes
-    for (uint32_t i = 0; i < GAMEPANEL_BUTTON_COUNT; i++)
+    // render target scope
     {
-        SDL_RenderCopy(renderer, bgImg, nullptr, &dst);
-        dst.y += GAMEPANEL_BOX_SIZE_PX;
+        RenderTargetGuard rguard(m_widgetCanvas);
+
+        // clear texture background, allow transparency
+        SDL_SetTextureBlendMode(m_widgetCanvas, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_RenderClear(renderer);
+
+        SDL_Rect dst;
+        dst.w = GAMEPANEL_BOX_SIZE_PX;
+        dst.h = GAMEPANEL_BOX_SIZE_PX;
+        dst.x = 0;
+        dst.y = 0;
+
+        // draw underlaying boxes
+        for (uint32_t i = 0; i < GAMEPANEL_BUTTON_COUNT; i++)
+        {
+            SDL_RenderCopy(renderer, bgImg, nullptr, &dst);
+            dst.y += GAMEPANEL_BOX_SIZE_PX;
+        }
+
+        // draw panel icons
+        dst.w = GAMEPANEL_ICON_SIZE_PX;
+        dst.h = GAMEPANEL_ICON_SIZE_PX;
+        dst.x = 8;
+        dst.y = 8;
+        SDL_Texture* fgImg;
+        for (uint32_t i = 0; i < GAMEPANEL_BUTTON_COUNT; i++)
+        {
+            fgImg = sResourceManager->GetInternalImage(gamePanelButtons[i].internalImageId);
+            if (fgImg)
+                SDL_RenderCopy(renderer, fgImg, nullptr, &dst);
+
+            dst.y += GAMEPANEL_BOX_SIZE_PX;
+        }
     }
-
-    // draw panel icons
-    dst.w = GAMEPANEL_ICON_SIZE_PX;
-    dst.h = GAMEPANEL_ICON_SIZE_PX;
-    dst.x = 8;
-    dst.y = 8;
-    SDL_Texture* fgImg;
-    for (uint32_t i = 0; i < GAMEPANEL_BUTTON_COUNT; i++)
-    {
-        fgImg = sResourceManager->GetInternalImage(gamePanelButtons[i].internalImageId);
-        if (fgImg)
-            SDL_RenderCopy(renderer, fgImg, nullptr, &dst);
-
-        dst.y += GAMEPANEL_BOX_SIZE_PX;
-    }
-
-    SDL_SetRenderTarget(renderer, nullptr);
 }

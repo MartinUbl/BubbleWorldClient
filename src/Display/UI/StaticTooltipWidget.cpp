@@ -162,44 +162,45 @@ void StaticTooltipWidget::UpdateCanvas()
     // create texture to be rendered onto
     m_widgetCanvas = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, widgetWidth, totalHeight);
 
-    SDL_SetRenderTarget(renderer, m_widgetCanvas);
-
-    SDL_SetRenderDrawColor(renderer, defaultTooltipBackgroundColor.r, defaultTooltipBackgroundColor.g, defaultTooltipBackgroundColor.b, 0xFF);
-    SDL_RenderClear(renderer);
-
-    SDL_Rect dstrect;
-
-    // if the image is requested to be drawn, draw it and move text a bit to the right
-    uint32_t textBase = defaultTooltipPadding;
-    if (m_imageId > 0)
+    // render target scope
     {
-        dstrect.w = STATIC_TOOLTIP_ICON_SIZE_PX;
-        dstrect.h = STATIC_TOOLTIP_ICON_SIZE_PX;
-        dstrect.x = defaultTooltipPadding;
-        dstrect.y = (totalHeight - STATIC_TOOLTIP_ICON_SIZE_PX) / 2;
+        RenderTargetGuard rguard(m_widgetCanvas);
 
-        textBase += STATIC_TOOLTIP_ICON_SIZE_PX + defaultTooltipPadding;
-        SDL_Texture* img = sResourceManager->GetImage(m_imageId);
-        if (img)
-            SDL_RenderCopy(renderer, img, nullptr, &dstrect);
-    }
+        SDL_SetRenderDrawColor(renderer, defaultTooltipBackgroundColor.r, defaultTooltipBackgroundColor.g, defaultTooltipBackgroundColor.b, 0xFF);
+        SDL_RenderClear(renderer);
 
-    // render title text
-    SDL_QueryTexture(titleTexture, nullptr, nullptr, &dstrect.w, &dstrect.h);
-    dstrect.x = textBase;
-    dstrect.y = defaultTooltipPadding;
-    SDL_RenderCopy(renderer, titleTexture, nullptr, &dstrect);
+        SDL_Rect dstrect;
 
-    // if the content text texture is defined, put it onto canvas
-    if (contTexture)
-    {
-        SDL_QueryTexture(contTexture, nullptr, nullptr, &dstrect.w, &dstrect.h);
+        // if the image is requested to be drawn, draw it and move text a bit to the right
+        uint32_t textBase = defaultTooltipPadding;
+        if (m_imageId > 0)
+        {
+            dstrect.w = STATIC_TOOLTIP_ICON_SIZE_PX;
+            dstrect.h = STATIC_TOOLTIP_ICON_SIZE_PX;
+            dstrect.x = defaultTooltipPadding;
+            dstrect.y = (totalHeight - STATIC_TOOLTIP_ICON_SIZE_PX) / 2;
+
+            textBase += STATIC_TOOLTIP_ICON_SIZE_PX + defaultTooltipPadding;
+            SDL_Texture* img = sResourceManager->GetImage(m_imageId);
+            if (img)
+                SDL_RenderCopy(renderer, img, nullptr, &dstrect);
+        }
+
+        // render title text
+        SDL_QueryTexture(titleTexture, nullptr, nullptr, &dstrect.w, &dstrect.h);
         dstrect.x = textBase;
-        dstrect.y = titleHeight + defaultTooltipPadding * 2;
-        SDL_RenderCopy(renderer, contTexture, nullptr, &dstrect);
-    }
+        dstrect.y = defaultTooltipPadding;
+        SDL_RenderCopy(renderer, titleTexture, nullptr, &dstrect);
 
-    SDL_SetRenderTarget(renderer, nullptr);
+        // if the content text texture is defined, put it onto canvas
+        if (contTexture)
+        {
+            SDL_QueryTexture(contTexture, nullptr, nullptr, &dstrect.w, &dstrect.h);
+            dstrect.x = textBase;
+            dstrect.y = titleHeight + defaultTooltipPadding * 2;
+            SDL_RenderCopy(renderer, contTexture, nullptr, &dstrect);
+        }
+    }
 
     // don't forget to cache height
     m_dimensions.h = totalHeight;
