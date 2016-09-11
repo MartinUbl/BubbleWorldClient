@@ -73,6 +73,7 @@ enum AppMouseCursors
 {
     MOUSE_CURSOR_NORMAL = 0,
     MOUSE_CURSOR_TALK = 1,
+    MOUSE_CURSOR_TEMP = 2,
     MAX_MOUSE_CURSOR
 };
 
@@ -144,6 +145,10 @@ class Drawing
         void SetMouseCursor(AppMouseCursors type);
         // retrieves current mouse cursor type
         AppMouseCursors GetCurrentMouseCursor();
+        // adds image under cursor
+        void SetCursorDragImage(uint32_t imageId);
+        // removes image from under the cursor and restores original cursor
+        void RestoreCursor();
         // sets flag to redraw whole canvas
         void SetCanvasRedrawFlag();
         // sets flag to redraw UI elements ("rerender")

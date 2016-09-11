@@ -45,7 +45,8 @@ static const FontParam appFontParams[MAX_FONT] = {
 // application cursor filenames
 static const char* appCursorFilenames[MAX_MOUSE_CURSOR] = {
     "main.png",
-    "talk.png"
+    "talk.png",
+    nullptr
 };
 
 Drawing::Drawing()
@@ -55,6 +56,7 @@ Drawing::Drawing()
     m_hoverElement = nullptr;
     m_focusElement = nullptr;
     m_drawWorld = false;
+    m_mouseCursors[MOUSE_CURSOR_TEMP] = nullptr;
     m_currentMouseCursor = MAX_MOUSE_CURSOR;
 }
 
@@ -127,11 +129,16 @@ bool Drawing::Init()
     // initialize application mouse cursors
     for (int i = 0; i < MAX_MOUSE_CURSOR; i++)
     {
-        std::string path = CURSORS_DATA_DIR + std::string(appCursorFilenames[i]);
-        m_mouseCursors[i] = MouseCursor::LoadFromFile(path.c_str());
+        if (appCursorFilenames[i] != nullptr)
+        {
+            std::string path = CURSORS_DATA_DIR + std::string(appCursorFilenames[i]);
+            m_mouseCursors[i] = MouseCursor::LoadFromFile(path.c_str());
 
-        if (!m_mouseCursors[i])
-            sLog->Error("Could not load mouse cursor ID %i", i);
+            if (!m_mouseCursors[i])
+                sLog->Error("Could not load mouse cursor ID %i", i);
+        }
+        else
+            m_mouseCursors[i] = nullptr;
     }
 
     // set normal mouse cursor
@@ -145,6 +152,13 @@ void Drawing::SetMouseCursor(AppMouseCursors type)
     if (type == MAX_MOUSE_CURSOR || !m_mouseCursors[type])
         return;
 
+    // if current cursor is temporary, delete it before switching cursors
+    if (m_currentMouseCursor == MOUSE_CURSOR_TEMP && m_mouseCursors[MOUSE_CURSOR_TEMP])
+    {
+        delete m_mouseCursors[MOUSE_CURSOR_TEMP];
+        m_mouseCursors[MOUSE_CURSOR_TEMP] = nullptr;
+    }
+
     SDL_SetCursor(m_mouseCursors[type]->GetSDLCursor());
     m_currentMouseCursor = type;
 }
@@ -152,6 +166,24 @@ void Drawing::SetMouseCursor(AppMouseCursors type)
 AppMouseCursors Drawing::GetCurrentMouseCursor()
 {
     return m_currentMouseCursor;
+}
+
+void Drawing::SetCursorDragImage(uint32_t imageId)
+{
+    m_mouseCursors[MOUSE_CURSOR_TEMP] = MouseCursor::CreateFromImage(imageId);
+
+    if (!m_mouseCursors[MOUSE_CURSOR_TEMP])
+        return;
+
+    SetMouseCursor(MOUSE_CURSOR_TEMP);
+}
+
+void Drawing::RestoreCursor()
+{
+    if (!m_mouseCursors[MOUSE_CURSOR_TEMP])
+        return;
+
+    SetMouseCursor(MOUSE_CURSOR_NORMAL);
 }
 
 void Drawing::SetCanvasRedrawFlag()

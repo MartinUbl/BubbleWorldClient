@@ -75,8 +75,12 @@ class InventoryWidget : public UIWidget
         uint8_t m_rowOffset;
         // tooltip widget created alongside inventory widget
         StaticTooltipWidget* m_itemTooltip;
-        // current slot, which is used to draw tooltip - may be empty; -1 for "none"
+        // current slot, which is used to draw tooltip - never empty slot; -1 for "none"
         int32_t m_tooltipSlot;
+        // always set to valid slot, when the mouse is over - may be empty; -1 for "none"
+        int32_t m_hoverSlot;
+        // slot we are dragging item from; -1 for "none"
+        int32_t m_dragSourceSlot;
 };
 
 #endif

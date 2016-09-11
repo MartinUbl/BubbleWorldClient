@@ -30,12 +30,17 @@ class MouseCursor
 
         // factory method for loading cursor from file
         static MouseCursor* LoadFromFile(const char* cursorImageFilename);
+        // factory method for creating cursor using existing image resource
+        static MouseCursor* CreateFromImage(uint32_t imageId);
         // retrieves built SDL cursor from loaded data
         SDL_Cursor* GetSDLCursor();
 
     protected:
         // protected constructor; use LoadFromFile factory method to instantiate
         MouseCursor();
+
+        // protected factory method for creating cursor using surface and "hot coordinates"; the surface is FREE'd after creation!
+        static MouseCursor* CreateFromSurface(SDL_Surface* surface, uint32_t hotX, uint32_t hotY);
 
     private:
         // prepared SDL cursor

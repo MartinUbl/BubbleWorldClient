@@ -536,6 +536,10 @@ std::list<ChatMessageRecord> const& Gameplay::GetChatMessages()
 
 void Gameplay::SetHoverObject(WorldObject* obj)
 {
+    // do not change cursor if some "cursor-changing" action is in progress
+    if (sDrawing->GetCurrentMouseCursor() == MOUSE_CURSOR_TEMP)
+        return;
+
     // do not set hover object, when UI has hover - the UI has higher priority since it's "above" world
     if (sDrawing->HasUIWidgetHover())
     {

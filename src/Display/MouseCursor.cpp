@@ -20,6 +20,8 @@
 #include "General.h"
 #include "MouseCursor.h"
 #include "Log.h"
+#include "ImageStorage.h"
+#include "StorageManager.h"
 
 MouseCursor::MouseCursor()
 {
@@ -29,6 +31,19 @@ MouseCursor::MouseCursor()
 MouseCursor::~MouseCursor()
 {
     //
+}
+
+MouseCursor* MouseCursor::CreateFromSurface(SDL_Surface* surface, uint32_t hotX, uint32_t hotY)
+{
+    MouseCursor* cur = new MouseCursor();
+
+    cur->m_activeX = hotX;
+    cur->m_activeY = hotY;
+    cur->m_cursor = SDL_CreateColorCursor(surface, hotX, hotY);
+
+    SDL_FreeSurface(surface);
+
+    return cur;
 }
 
 MouseCursor* MouseCursor::LoadFromFile(const char* cursorImageFilename)
@@ -64,14 +79,29 @@ MouseCursor* MouseCursor::LoadFromFile(const char* cursorImageFilename)
         coordY = 0;
     }
 
-    // create cursor instance
-    MouseCursor* cur = new MouseCursor();
+    return CreateFromSurface(imgsurface, coordX, coordY);
+}
 
-    cur->m_activeX = coordX;
-    cur->m_activeY = coordY;
-    cur->m_cursor = SDL_CreateColorCursor(imgsurface, coordX, coordY);
+MouseCursor* MouseCursor::CreateFromImage(uint32_t imageId)
+{
+    // try to get database record
+    ImageDatabaseRecord* dbrec = sImageStorage->GetImageRecord(imageId);
+    if (!dbrec)
+        return nullptr;
 
-    return cur;
+    // try to load image
+    SDL_Surface* img = IMG_Load((std::string(DATA_DIR) + dbrec->filename).c_str());
+    if (!img)
+        return nullptr;
+
+    // we require valid dimensions
+    if (img->w == 0 || img->h == 0)
+    {
+        SDL_FreeSurface(img);
+        return nullptr;
+    }
+
+    return CreateFromSurface(img, img->w / 2, img->h / 2);
 }
 
 SDL_Cursor* MouseCursor::GetSDLCursor()

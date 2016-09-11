@@ -34,6 +34,8 @@ InventoryWidget::InventoryWidget() : UIWidget(UIWIDGET_INVENTORY)
     m_rowOffset = 0;
     m_itemTooltip = StaticTooltipWidget::Create(L"", L"", 0);
     m_tooltipSlot = -1;
+    m_dragSourceSlot = -1;
+    m_hoverSlot = -1;
 }
 
 InventoryWidget::~InventoryWidget()
@@ -45,6 +47,13 @@ InventoryWidget::~InventoryWidget()
         sDrawing->RemoveUIWidget(m_itemTooltip);
         sDrawing->SetCanvasRedrawFlag();
         delete m_itemTooltip;
+    }
+
+    if (m_dragSourceSlot >= 0)
+    {
+        m_dragSourceSlot = -1;
+        sDrawing->RestoreCursor();
+        sDrawing->SetCanvasRedrawFlag();
     }
 }
 
@@ -104,6 +113,40 @@ void InventoryWidget::OnMouseClick(bool left, bool press, uint32_t relativeX, ui
                 }
             }
         }
+
+        // if there is some item to be dragged (tooltipSlot is the sign of it)
+        if (m_tooltipSlot >= 0 && m_dragSourceSlot == -1)
+        {
+            InventoryItem* item = sGameplay->GetInventorySlot(m_tooltipSlot);
+            if (item)
+            {
+                ItemCacheEntry* ic = sGameplay->GetItemCacheEntry(item->id);
+                if (ic)
+                {
+                    // set drag source and set cursor
+                    m_dragSourceSlot = m_tooltipSlot;
+                    sDrawing->SetCursorDragImage(ic->imageId);
+                    sDrawing->SetCanvasRedrawFlag();
+                }
+            }
+        }
+    }
+
+    // mouse release
+    if (left && !press)
+    {
+        // if we dragged some item
+        if (m_dragSourceSlot >= 0)
+        {
+            // if the source and destination slots are valid, swap it
+            if (m_hoverSlot >= 0 && m_dragSourceSlot != m_hoverSlot)
+                sGameplay->SendSwapInventorySlots(m_dragSourceSlot, m_hoverSlot);
+
+            // restore cursor back to normal
+            sDrawing->RestoreCursor();
+            sDrawing->SetCanvasRedrawFlag();
+            m_dragSourceSlot = -1;
+        }
     }
 }
 
@@ -162,6 +205,8 @@ void InventoryWidget::OnMouseMove(uint32_t relativeX, uint32_t relativeY)
             sDrawing->RemoveUIWidget(m_itemTooltip);
             sDrawing->SetCanvasRedrawFlag();
         }
+
+        m_hoverSlot = detSlot;
     }
     else
     {
@@ -172,6 +217,8 @@ void InventoryWidget::OnMouseMove(uint32_t relativeX, uint32_t relativeY)
             sDrawing->RemoveUIWidget(m_itemTooltip);
             sDrawing->SetCanvasRedrawFlag();
         }
+
+        m_hoverSlot = -1;
     }
 }
 
@@ -184,6 +231,16 @@ void InventoryWidget::OnMouseLeave()
         sDrawing->RemoveUIWidget(m_itemTooltip);
         sDrawing->SetCanvasRedrawFlag();
     }
+
+    // stop "drag and drop" when leaving widget area
+    if (m_dragSourceSlot >= 0)
+    {
+        m_dragSourceSlot = -1;
+        sDrawing->RestoreCursor();
+        sDrawing->SetCanvasRedrawFlag();
+    }
+
+    m_hoverSlot = -1;
 }
 
 void InventoryWidget::UpdateCanvas()
