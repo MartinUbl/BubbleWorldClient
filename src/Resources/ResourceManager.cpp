@@ -77,22 +77,37 @@ void ResourceManager::SignalResourceMetadataRetrieved(ResourceType type, uint32_
     }
 }
 
-ImageResource* ResourceManager::GetOrCreateImageResource(uint32_t id)
+ImageResource* ResourceManager::GetOrCreateImageResource(uint32_t id, bool isInternal)
 {
     ImageResource* imgres;
 
     // if resource does not exist, create it
-    if (m_resources[RSTYPE_IMAGE].find(id) == m_resources[RSTYPE_IMAGE].end())
+    if ((!isInternal && m_resources[RSTYPE_IMAGE].find(id) == m_resources[RSTYPE_IMAGE].end()) || (isInternal && m_internalResources[RSTYPE_IMAGE].find(id) == m_internalResources[RSTYPE_IMAGE].end()))
     {
         imgres = new ImageResource(id);
         imgres->renderedTexture = nullptr;
         imgres->metadata = nullptr;
-        m_resources[RSTYPE_IMAGE][id] = imgres;
-        m_resources[RSTYPE_IMAGE][id]->loadState = RLS_NOT_LOADED;
-        m_resources[RSTYPE_IMAGE][id]->metaLoadState = RLS_NOT_LOADED;
+        imgres->isInternal = isInternal;
+        if (!isInternal)
+        {
+            m_resources[RSTYPE_IMAGE][id] = imgres;
+            m_resources[RSTYPE_IMAGE][id]->loadState = RLS_NOT_LOADED;
+            m_resources[RSTYPE_IMAGE][id]->metaLoadState = RLS_NOT_LOADED;
+        }
+        else
+        {
+            m_internalResources[RSTYPE_IMAGE][id] = imgres;
+            m_internalResources[RSTYPE_IMAGE][id]->loadState = RLS_NOT_LOADED;
+            m_internalResources[RSTYPE_IMAGE][id]->metaLoadState = RLS_NOT_LOADED;
+        }
     }
     else
-        imgres = (ImageResource*)m_resources[RSTYPE_IMAGE][id];
+    {
+        if (!isInternal)
+            imgres = (ImageResource*)m_resources[RSTYPE_IMAGE][id];
+        else
+            imgres = (ImageResource*)m_internalResources[RSTYPE_IMAGE][id];
+    }
 
     // if metadata not loaded, load it
     if (imgres->metaLoadState == RLS_NOT_LOADED)
@@ -119,6 +134,24 @@ ImageMetadataDatabaseRecord* ResourceManager::GetImageMetadata(uint32_t id)
 ImageResource* ResourceManager::GetImageRecord(uint32_t id)
 {
     ImageResource* imgres = GetOrCreateImageResource(id);
+    return imgres;
+}
+
+SDL_Texture* ResourceManager::GetInternalImage(uint32_t id)
+{
+    ImageResource* imgres = GetOrCreateImageResource(id, true);
+    return imgres->renderedTexture;
+}
+
+ImageMetadataDatabaseRecord* ResourceManager::GetInternalImageMetadata(uint32_t id)
+{
+    ImageResource* imgres = GetOrCreateImageResource(id, true);
+    return imgres->metadata;
+}
+
+ImageResource* ResourceManager::GetInternalImageRecord(uint32_t id)
+{
+    ImageResource* imgres = GetOrCreateImageResource(id, true);
     return imgres;
 }
 
@@ -178,7 +211,7 @@ void ResourceManager::LoadImageResourceMeta(ImageResource* imgres)
     // loading should not already be in progress
     if (imgres->metaLoadState != RLS_RETRIEVING && imgres->metaLoadState != RLS_LOADING_FROM_FILE)
     {
-        ImageMetadataDatabaseRecord* rec = sImageStorage->GetImageMetadataRecord(imgres->id);
+        ImageMetadataDatabaseRecord* rec = !imgres->isInternal ? sImageStorage->GetImageMetadataRecord(imgres->id) : sInternalImageStorage->GetImageMetadataRecord(imgres->id);
         // we know about this image
         if (rec)
         {
@@ -189,10 +222,14 @@ void ResourceManager::LoadImageResourceMeta(ImageResource* imgres)
 
             sDrawing->SetCanvasRedrawFlag();
 
-            sResourceStreamManager->SendVerifyMetadataChecksumPacket(RSTYPE_IMAGE, imgres->id, rec->checksum.c_str());
+            if (!imgres->isInternal)
+                sResourceStreamManager->SendVerifyMetadataChecksumPacket(RSTYPE_IMAGE, imgres->id, rec->checksum.c_str());
         }
         else
-            RequestResourceMetadata(RSTYPE_IMAGE, imgres->id);
+        {
+            if (!imgres->isInternal)
+                RequestResourceMetadata(RSTYPE_IMAGE, imgres->id);
+        }
     }
 }
 
@@ -201,7 +238,7 @@ void ResourceManager::LoadImageResource(ImageResource* imgres)
     // loading should not already be in progress (also prohibit state: loaded + metadata loading)
     if (imgres->loadState != RLS_RETRIEVING && imgres->loadState != RLS_LOADING_FROM_FILE && !(imgres->loadState == RLS_LOADED && imgres->metaLoadState == RLS_RETRIEVING))
     {
-        ImageDatabaseRecord* rec = sImageStorage->GetImageRecord(imgres->id);
+        ImageDatabaseRecord* rec = !imgres->isInternal ? sImageStorage->GetImageRecord(imgres->id) : sInternalImageStorage->GetImageRecord(imgres->id);
         // we know about this resource
         if (rec)
         {
@@ -234,13 +271,18 @@ void ResourceManager::LoadImageResource(ImageResource* imgres)
             // i know i would read this later, so.. my idea is to draw the old resource,
             // send checksum verify packet and if the checksum does not match, request the
             // resource once again, drop old texture, load new texture and redraw
-            sResourceStreamManager->SendVerifyChecksumPacket(RSTYPE_IMAGE, imgres->id, rec->checksumStr.c_str());
+
+            // internal resources are pure client-side - i.e. UI textures, etc.
+
+            if (!imgres->isInternal)
+                sResourceStreamManager->SendVerifyChecksumPacket(RSTYPE_IMAGE, imgres->id, rec->checksumStr.c_str());
         }
         else
         {
             // this will send request packet and set state to "retrieving"
             // the rest is handled by NetworkHandlers and ResourceStreamManager
-            RequestResource(RSTYPE_IMAGE, imgres->id);
+            if (!imgres->isInternal)
+                RequestResource(RSTYPE_IMAGE, imgres->id);
         }
     }
 }

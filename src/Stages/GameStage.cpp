@@ -25,6 +25,7 @@
 #include "UI/TextFieldWidget.h"
 #include "UI/SplashMessageWidget.h"
 #include "UI/InventoryWidget.h"
+#include "UI/GamePanelWidget.h"
 #include "Stages.h"
 #include "Gameplay.h"
 #include "Application.h"
@@ -34,6 +35,7 @@ void GameStage::OnEnter()
 {
     m_chatWidget = nullptr;
     m_inventoryWidget = nullptr;
+    m_gamePanel = GamePanelWidget::Create();
     sDrawing->SetDrawWorld(true);
 }
 
@@ -110,7 +112,18 @@ void GameStage::OnKeyPress(int key, bool press)
 
 void GameStage::OnUIAction(uint32_t elementId, UIActionType actionId)
 {
-    //
+    switch (actionId)
+    {
+        case UIACTION_GAMEPANEL_INVENTORY:
+            if (!m_inventoryWidget)
+                OpenInventory();
+            else
+                CloseInventory();
+            break;
+        case UIACTION_GAMEPANEL_QUESTS:
+            // TODO: implement quest board
+            break;
+    }
 }
 
 void GameStage::OnGlobalAction(GlobalActionIDs actionId, void* actionParam)

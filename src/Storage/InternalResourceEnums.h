@@ -17,31 +17,15 @@
  * along with BubbleWorld. If not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef BW_UIENUMS_H
-#define BW_UIENUMS_H
+#ifndef BW_INTERNAL_RESOURCE_ENUMS_H
+#define BW_INTERNAL_RESOURCE_ENUMS_H
 
-// UI widget type
-enum UIWidgetType
+enum InternalImages
 {
-    UIWIDGET_BUTTON,
-    UIWIDGET_LABEL,
-    UIWIDGET_SPLASHMESSAGE,
-    UIWIDGET_TEXTFIELD,
-    UIWIDGET_DIALOGUE,
-    UIWIDGET_INVENTORY,
-    UIWIDGET_STATICTOOLTIP,
-    UIWIDGET_GAMEPANEL,
-};
-
-// UI action type (used for propagating through application)
-enum UIActionType
-{
-    UIACTION_MOUSE_CLICK_LEFT = 0,
-    UIACTION_MOUSE_CLICK_RIGHT = 1,
-    UIACTION_TEXT_CHANGED = 2,
-
-    UIACTION_GAMEPANEL_INVENTORY = 3,
-    UIACTION_GAMEPANEL_QUESTS = 4,
+    IIMG_NONE = 0,
+    IIMG_INVENTORY = 1,
+    IIMG_QUEST = 2,
+    IIMG_PANEL_BOX = 3,
 };
 
 #endif

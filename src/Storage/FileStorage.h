@@ -28,6 +28,7 @@ enum FileDBStorageTypes
     SQLITE_DB_IMAGE = 0,
     SQLITE_DB_MAP = 1,
     SQLITE_DB_ITEMCACHE = 2,
+    SQLITE_DB_INTERNAL_IMAGE = 3,
     MAX_SQLITE_DB
 };
 

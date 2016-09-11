@@ -26,6 +26,7 @@
 #include "ImageStorage.h"
 #include "MapStorage.h"
 #include "ItemCacheStorage.h"
+#include "InternalImageStorage.h"
 
 /*
  * Singleton class for managing any type of storage
@@ -57,5 +58,6 @@ class StorageManager
 #define sImageStorage ((ImageStorage*)sStorageManager->GetFileStorage(SQLITE_DB_IMAGE))
 #define sMapStorage ((MapStorage*)sStorageManager->GetFileStorage(SQLITE_DB_MAP))
 #define sItemCache ((ItemCacheStorage*)sStorageManager->GetFileStorage(SQLITE_DB_ITEMCACHE))
+#define sInternalImageStorage ((InternalImageStorage*)sStorageManager->GetFileStorage(SQLITE_DB_INTERNAL_IMAGE))
 
 #endif

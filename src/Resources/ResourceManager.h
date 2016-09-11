@@ -56,12 +56,14 @@ struct ImageMetadataDatabaseRecord;
  */
 struct ImageResource : public BaseResource
 {
-    ImageResource(uint32_t _id = 0) : BaseResource(RSTYPE_IMAGE, _id) { };
+    ImageResource(uint32_t _id = 0) : BaseResource(RSTYPE_IMAGE, _id), isInternal(false) { };
 
     // prerendered texture
     SDL_Texture* renderedTexture;
     // metadata pointer
     ImageMetadataDatabaseRecord* metadata;
+    // is internal resource?
+    bool isInternal;
     // cached rectangles used for drawing different portions of sprite as animation frames
     std::vector<SDL_Rect> animSpriteRects;
 };
@@ -87,6 +89,12 @@ class ResourceManager
         ImageMetadataDatabaseRecord* GetImageMetadata(uint32_t id);
         // retrieves whole image record
         ImageResource* GetImageRecord(uint32_t id);
+        // retrieves prerendered internal image
+        SDL_Texture* GetInternalImage(uint32_t id);
+        // retrieves internal image metadata
+        ImageMetadataDatabaseRecord* GetInternalImageMetadata(uint32_t id);
+        // retrieves whole internal image record
+        ImageResource* GetInternalImageRecord(uint32_t id);
         // requests resource from remote server
         void RequestResource(ResourceType type, uint32_t id);
         // requests resource metadata from remote server
@@ -103,13 +111,15 @@ class ResourceManager
         // load image resource metadata, if not available, request it, if available, verify checksum
         void LoadImageResourceMeta(ImageResource* imgres);
         // retrieve internal image resource record
-        ImageResource* GetOrCreateImageResource(uint32_t id);
+        ImageResource* GetOrCreateImageResource(uint32_t id, bool isInternal = false);
         // prepare cached rectangles for animations of specified resource
         void CacheAnimSpriteRectagles(ImageResource* imgres);
 
     private:
-        // internal resource map
+        // resource map
         ResourceMap m_resources[MAX_RSTYPE];
+        // internal resource map
+        ResourceMap m_internalResources[MAX_RSTYPE];
 };
 
 #define sResourceManager Singleton<ResourceManager>::getInstance()

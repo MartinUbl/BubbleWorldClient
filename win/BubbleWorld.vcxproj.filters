@@ -160,6 +160,12 @@
     <ClCompile Include="..\src\Display\UI\StaticTooltipWidget.cpp">
       <Filter>src\Display\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Storage\InternalImageStorage.cpp">
+      <Filter>src\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Display\UI\GamePanelWidget.cpp">
+      <Filter>src\Display\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\General\Application.h">
@@ -310,6 +316,15 @@
       <Filter>src\Display\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Display\UI\StaticTooltipWidget.h">
+      <Filter>src\Display\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Storage\InternalImageStorage.h">
+      <Filter>src\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Storage\InternalResourceEnums.h">
+      <Filter>src\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Display\UI\GamePanelWidget.h">
       <Filter>src\Display\UI</Filter>
     </ClInclude>
   </ItemGroup>

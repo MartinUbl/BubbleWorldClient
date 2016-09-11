@@ -128,6 +128,7 @@ class ConnectingStage : public StageTemplate
 
 class TextFieldWidget;
 class InventoryWidget;
+class GamePanelWidget;
 
 /*
  * Game stage class
@@ -161,6 +162,8 @@ class GameStage : public StageTemplate
         TextFieldWidget* m_chatWidget;
         // inventory widget
         InventoryWidget* m_inventoryWidget;
+        // game panel widget
+        GamePanelWidget* m_gamePanel;
 };
 
 #endif
