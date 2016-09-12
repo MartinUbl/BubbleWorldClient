@@ -32,6 +32,7 @@
 #include "Colors.h"
 #include "UI\DialogueWidget.h"
 #include "ResourceManager.h"
+#include "Config.h"
 
 #include "WorldObject.h"
 
@@ -44,9 +45,7 @@ Gameplay::Gameplay()
 
 void Gameplay::ConnectToServer()
 {
-    // TODO: real addresses taken from some kind of config
-
-    sNetwork->Connect("127.0.0.1", 7874);
+    sNetwork->Connect(sConfig->GetStringValue(CONFIG_STRING_CONNECT_HOST), (uint16_t)sConfig->GetIntValue(CONFIG_INT_CONNECT_PORT));
 }
 
 void Gameplay::Login(const char* username, const char* password)

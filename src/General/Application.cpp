@@ -25,6 +25,7 @@
 #include "StorageManager.h"
 #include "Gameplay.h"
 #include "FramerateLimiter.h"
+#include "Config.h"
 
 #include "CRC32.h"
 
@@ -47,6 +48,14 @@ Application::~Application()
 
 bool Application::Init()
 {
+    sConfig->InitDefaults();
+
+    if (!sConfig->LoadConfig())
+        return false;
+
+    if (!sConfig->ValidateConfig())
+        return false;
+
     // log some info
     sLog->Info("BubbleWorld " APP_VERSION_STR);
 
@@ -94,8 +103,7 @@ bool Application::Init()
     SetStageType(STAGE_MENU);
 
     // initialize FPS limiter
-    // TODO: load FPS limit from config
-    sFramerateLimiter->Initialize(200);
+    sFramerateLimiter->Initialize((uint32_t)sConfig->GetIntValue(CONFIG_INT_FPS_LIMIT));
 
     return true;
 }

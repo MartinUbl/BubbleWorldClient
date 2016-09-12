@@ -165,6 +165,7 @@
     <ClCompile Include="..\src\Gameplay\Gameplay.cpp" />
     <ClCompile Include="..\src\Gameplay\Map.cpp" />
     <ClCompile Include="..\src\General\Application.cpp" />
+    <ClCompile Include="..\src\General\Config.cpp" />
     <ClCompile Include="..\src\General\CRC32.cpp" />
     <ClCompile Include="..\src\General\FramerateLimiter.cpp" />
     <ClCompile Include="..\src\General\Log.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="..\src\Gameplay\MapEnums.h" />
     <ClInclude Include="..\src\General\Application.h" />
     <ClInclude Include="..\src\General\Compatibility.h" />
+    <ClInclude Include="..\src\General\Config.h" />
     <ClInclude Include="..\src\General\CRC32.h" />
     <ClInclude Include="..\src\General\FramerateLimiter.h" />
     <ClInclude Include="..\src\General\General.h" />
