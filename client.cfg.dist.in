@@ -1,0 +1,15 @@
+################################################
+### This is an example of configuration file ###
+### Change values to fit your needs          ###
+################################################
+
+################################################
+# BubbleWorld client configuration file        #
+################################################
+
+# connection settings
+connect_ip = 127.0.0.1
+connect_port = 7874
+
+# misc
+fps_limit = 200

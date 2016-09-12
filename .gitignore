@@ -4,6 +4,7 @@ win/Debug
 win/Release
 win/Win32
 win/x64
+win/*.cfg
 *.opensdf
 *.sdf
 *.suo
